@@ -18,7 +18,8 @@ func _ready() -> void:
 func init(color):
 	color_ = color
 	if color == "black":
-		$RigidBody/MeshInstance.get_surface_material(0).set_albedo(Color(0,0,0))
-
+		$RigidBody/MeshInstance.set_surface_material(0, preload("res://Materials/black_material.tres"))
+	if color == "white":
+		$RigidBody/MeshInstance.set_surface_material(0, preload("res://Materials/white_material.tres"))
 func getColor():
 	return color_

@@ -1,4 +1,4 @@
-extends "res://Figure.gd"
+extends "Figure.gd"
 
 # Declare member variables here. Examples:
 # var a: int = 2
