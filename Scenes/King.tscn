@@ -18,3 +18,4 @@ material/0 = null
 [node name="CollisionShape" type="CollisionShape" parent="RigidBody"]
 transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0 )
 shape = SubResource( 1 )
+[connection signal="input_event" from="RigidBody" to="." method="_on_RigidBody_input_event"]
