@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/Rook.obj-4379feaa5f15e45bc20d8bba52a54324.mesh"
+
+[deps]
+
+files=[ "res://.import/Rook.obj-4379feaa5f15e45bc20d8bba52a54324.mesh" ]
+
+source_file="res://Figures/Rook.obj"
+dest_files=[ "res://.import/Rook.obj-4379feaa5f15e45bc20d8bba52a54324.mesh", "res://.import/Rook.obj-4379feaa5f15e45bc20d8bba52a54324.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/King.obj-bdfda79b4b8d198b18791811c466256d.mesh"
+
+[deps]
+
+files=[ "res://.import/King.obj-bdfda79b4b8d198b18791811c466256d.mesh" ]
+
+source_file="res://Figures/King.obj"
+dest_files=[ "res://.import/King.obj-bdfda79b4b8d198b18791811c466256d.mesh", "res://.import/King.obj-bdfda79b4b8d198b18791811c466256d.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true
