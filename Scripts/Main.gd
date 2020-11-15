@@ -7,6 +7,8 @@ var Bishop = preload("res://Scenes/Bishop.tscn")
 var Queen = preload("res://Scenes/Queen.tscn")
 var King = preload("res://Scenes/King.tscn")
 
+var map_
+
 #export (PackedScene) var Pawn
 #export (PackedScene) var Figure
 
@@ -19,7 +21,8 @@ var King = preload("res://Scenes/King.tscn")
 func _ready() -> void:
 	randomize()
 	
-	var map = []
+	map_ = []
+	var map = map_
 	map.resize(8)
 	for pos in range(8):
 		map[pos] = []
@@ -93,13 +96,21 @@ func _ready() -> void:
 			var figure = map[Load][Load2]
 			if figure != null:
 				figure.set_translation(Vector3(Load*3-10.5,10,Load2*3-10.5))
+	
 
 #	for PawnLoad in range(8):
 #		var pawn = Figure.instance()
 #		add_child(pawn)
 #		pawn.set_translation(Vector3(7.5,3,PawnLoad*3-10.5))
 
+
+
 #	figure.position =
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta: float) -> void:
+func _process(delta: float) -> void:
+		for Load in range(8):
+			for Load2 in range(8):
+				var figure = map_[Load][Load2]
+#				figure.unSelectLast()
+
 #	pass
