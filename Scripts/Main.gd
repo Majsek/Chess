@@ -12,6 +12,7 @@ var map_
 var select_
 var mesh_
 var name_
+var moves_ = []
 
 #export (PackedScene) var Pawn
 #export (PackedScene) var Figure
@@ -24,6 +25,8 @@ var name_
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	randomize()
+	
+	
 	
 	map_ = []
 	var map = map_
@@ -112,22 +115,39 @@ func _ready() -> void:
 func getSelectPosition():
 	for check in range(8):
 		for check2 in range(8):
-			var figure = map_[check][check2]
-			if figure == select_:
+			if map_[check][check2] == select_:
 				print(check,check2)
 				return [check,check2]
-				
-func select(select):
+
+func select(select,color):
 	select_ = select
 	var pos = getSelectPosition()
 	var pos1 = pos[0]
 	var pos2 = pos[1]
+	var move_side
 #	if name_ == "pawn":
+	if color == "white":
+		move_side = +2
+	if color == "black":
+		move_side = -1
 	for move_pawn in range (2):
 		var move = Move.instance()
+		move.setPosition([pos1-move_pawn+move_side,pos2])
 		add_child(move)
-		move.set_translation(Vector3((pos1-move_pawn-1)*3-10.5,0.7,pos2*3-10.5))
+		moves_.append(move)
+		move.set_translation(Vector3((pos1-move_pawn+move_side)*3-10.5,0.7,pos2*3-10.5))
 
+
+func move(move_position):
+	select_.set_translation(Vector3(move_position[0]*3-10.5,10,move_position[1]*3-10.5))
+	for i in moves_:
+		i.queue_free()
+	moves_.clear()
+	var select_pos = getSelectPosition()
+	map_[select_pos[0]][select_pos[1]] = null
+	map_[move_position[0]][move_position[1]] = select_
+#	select_.get_child(0).sleeping = false
+	
 func who(name):
 	name_ = name
 	print(name_)
@@ -137,10 +157,7 @@ func _input(event):
 		if event.is_pressed():
 			if select_:
 				select_.resetColor(select_.getColor())
-				
-				print(select_)
-				
-				
+
 
 #func _process(delta: float) -> void:
 ##	for Load in range(8):
@@ -151,3 +168,6 @@ func _input(event):
 #
 #
 #	pass
+
+
+

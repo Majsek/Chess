@@ -13,8 +13,6 @@ func _on_RigidBody_input_event(camera: Node, event: InputEvent, click_position: 
 	._on_RigidBody_input_event(camera, event, click_position, click_normal, shape_idx)
 	if event.is_pressed():
 		get_parent().who("pawn")
-	
-
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta: float) -> void:
 #	pass
