@@ -5,7 +5,7 @@ var position_
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
+	get_parent().getMoveMesh($MeshInstance)
 
 func setPosition(position):
 	position_ = position

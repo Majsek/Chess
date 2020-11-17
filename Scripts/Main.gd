@@ -13,6 +13,7 @@ var select_
 var mesh_
 var name_
 var moves_ = []
+var moveMesh_
 
 #export (PackedScene) var Pawn
 #export (PackedScene) var Figure
@@ -34,11 +35,6 @@ func _ready() -> void:
 	for pos in range(8):
 		map[pos] = []
 		map[pos].resize(8)
-#		for pos2 in range(8):
-#			map[pos][pos2] = []
-#			map[pos][pos2].resize(2)
-#			map[pos][pos2] = "y="+str(pos)+" "+"x="+str(pos2)
-#	print(map)
 	
 	for Pawns in range(8):
 		var B_pawn = Pawn.instance()
@@ -120,23 +116,48 @@ func getSelectPosition():
 				return [check,check2]
 
 func select(select,color):
+	for i in moves_:
+		i.queue_free()
+	moves_.clear()
+	
 	select_ = select
 	var pos = getSelectPosition()
 	var pos1 = pos[0]
 	var pos2 = pos[1]
 	var move_side
-#	if name_ == "pawn":
-	if color == "white":
-		move_side = +2
-	if color == "black":
-		move_side = -1
-	for move_pawn in range (2):
-		var move = Move.instance()
-		move.setPosition([pos1-move_pawn+move_side,pos2])
+	if name_ == "pawn":
+		if color == "white":
+			move_side = +2
+		if color == "black":
+			move_side = -1
+		for move_pawn in range (2):
+			var move_position_y = pos1-move_pawn+move_side
+			var move_position_x = pos2
+			addMoves(move_position_y,move_position_x,color)
+	if name_ == "rook":
+		for move_rook in range (2):
+			var move_position_y = pos1-move_rook+move_side
+			var move_position_x = pos2
+			addMoves(move_position_y,move_position_x,color)
+
+func addMoves(move_position_y,move_position_x,color):
+	var move = Move.instance()
+	move.setPosition([move_position_y,move_position_x])
+	if map_[move_position_y][move_position_x] == null:
 		add_child(move)
 		moves_.append(move)
-		move.set_translation(Vector3((pos1-move_pawn+move_side)*3-10.5,0.7,pos2*3-10.5))
+		move.set_translation(Vector3((move_position_y)*3-10.5,0.7,move_position_x*3-10.5))
+	else: if map_[move_position_y][move_position_x].getColor() != color: 
+#			vyhozeni
+		add_child(move)
+		moves_.append(move)
+		moveMesh_.set_surface_material(0, preload("res://Materials/red_material.tres"))
+		move.set_translation(Vector3((move_position_y)*3-10.5,0.7,move_position_x*3-10.5))
+		
 
+func getMoveMesh(moveMesh):
+	moveMesh_ = moveMesh
+	
 
 func move(move_position):
 	select_.set_translation(Vector3(move_position[0]*3-10.5,10,move_position[1]*3-10.5))
