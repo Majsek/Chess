@@ -10,9 +10,9 @@ func _ready() -> void:
 	pass # Replace with function body.
 
 func _on_RigidBody_input_event(camera: Node, event: InputEvent, click_position: Vector3, click_normal: Vector3, shape_idx: int) -> void:
-	._on_RigidBody_input_event(camera, event, click_position, click_normal, shape_idx)
 	if event.is_pressed():
 		get_parent().who("queen")
+		._on_RigidBody_input_event(camera, event, click_position, click_normal, shape_idx)	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta: float) -> void:
 #	pass

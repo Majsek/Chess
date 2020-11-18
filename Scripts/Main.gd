@@ -125,23 +125,27 @@ func select(select,color):
 	var pos1 = pos[0]
 	var pos2 = pos[1]
 	var move_side
+	var dont1 = false
+	var dont2 = false
+	var dont3 = false
+	var dont4 = false
+	var dont5 = false
+	var dont6 = false
+	var dont7 = false
+	var dont8 = false
+	var move_position_y
+	var move_position_x
 	if name_ == "pawn":
 		if color == "white":
 			move_side = +2
 		if color == "black":
 			move_side = -1
 		for move_pawn in range (2):
-			var move_position_y = pos1-move_pawn+move_side
-			var move_position_x = pos2
+			move_position_y = pos1-move_pawn+move_side
+			move_position_x = pos2
 			addMoves(move_position_y,move_position_x,color)
 	if name_ == "rook":
-		var dont1 = false
-		var dont2 = false
-		var dont3 = false
-		var dont4 = false
-		var move_position_y
-		var move_position_x
-		for move_rook in range (8):
+		for move_rook in range (1,8):
 			if dont1 == false:
 				move_position_y = pos1-move_rook
 				move_position_x = pos2
@@ -160,8 +164,8 @@ func select(select,color):
 				dont4 = addMoves(move_position_y,move_position_x,color)
 	if name_ == "knight":
 		for move_knight in [0,1]:
-			var move_position_y = pos1+2+(move_knight*-1)
-			var move_position_x = pos2+1+(move_knight*+1)
+			move_position_y = pos1+2+(move_knight*-1)
+			move_position_x = pos2+1+(move_knight*+1)
 			addMoves(move_position_y,move_position_x,color)
 
 			move_position_y = pos1+2+(move_knight*-1)
@@ -176,58 +180,60 @@ func select(select,color):
 			move_position_x = pos2-1+move_knight*-1
 			addMoves(move_position_y,move_position_x,color)
 	if name_ == "bishop":
-		for move_bishop in range (8):
-			var move_position_y = pos1-move_bishop
-			var move_position_x = pos2+move_bishop
-			addMoves(move_position_y,move_position_x,color)
-
-			move_position_y = pos1+move_bishop
-			move_position_x = pos2+move_bishop
-			addMoves(move_position_y,move_position_x,color)
-
-			move_position_y = pos1+move_bishop
-			move_position_x = pos2-move_bishop
-			addMoves(move_position_y,move_position_x,color)
-
-			move_position_y = pos1-move_bishop
-			move_position_x = pos2-move_bishop
-			addMoves(move_position_y,move_position_x,color)
+		for move_bishop in range (1,8):
+			if dont1 == false:
+				move_position_y = pos1-move_bishop
+				move_position_x = pos2+move_bishop
+				dont1 = addMoves(move_position_y,move_position_x,color)
+			if dont2 == false:
+				move_position_y = pos1+move_bishop
+				move_position_x = pos2+move_bishop
+				dont2 = addMoves(move_position_y,move_position_x,color)
+			if dont3 == false:
+				move_position_y = pos1+move_bishop
+				move_position_x = pos2-move_bishop
+				dont3 = addMoves(move_position_y,move_position_x,color)
+			if dont4 == false:
+				move_position_y = pos1-move_bishop
+				move_position_x = pos2-move_bishop
+				dont4 = addMoves(move_position_y,move_position_x,color)
 	if name_ == "queen":
-		for move_queen in range (8):
-			var move_position_y = pos1-move_queen
-			var move_position_x = pos2
-			addMoves(move_position_y,move_position_x,color)
-
-			move_position_y = pos1+move_queen
-			move_position_x = pos2
-			addMoves(move_position_y,move_position_x,color)
-
-			move_position_y = pos1
-			move_position_x = pos2-move_queen
-			addMoves(move_position_y,move_position_x,color)
-
-			move_position_y = pos1
-			move_position_x = pos2+move_queen
-			addMoves(move_position_y,move_position_x,color)
-
-			move_position_y = pos1-move_queen
-			move_position_x = pos2+move_queen
-			addMoves(move_position_y,move_position_x,color)
-
-			move_position_y = pos1+move_queen
-			move_position_x = pos2+move_queen
-			addMoves(move_position_y,move_position_x,color)
-
-			move_position_y = pos1+move_queen
-			move_position_x = pos2-move_queen
-			addMoves(move_position_y,move_position_x,color)
-
-			move_position_y = pos1-move_queen
-			move_position_x = pos2-move_queen
-			addMoves(move_position_y,move_position_x,color)
+		for move_queen in range (1,8):
+			if dont1 == false:
+				move_position_y = pos1-move_queen
+				move_position_x = pos2
+				dont1 = addMoves(move_position_y,move_position_x,color)
+			if dont2 == false:
+				move_position_y = pos1+move_queen
+				move_position_x = pos2
+				dont2 = addMoves(move_position_y,move_position_x,color)
+			if dont3 == false:
+				move_position_y = pos1
+				move_position_x = pos2-move_queen
+				dont3 = addMoves(move_position_y,move_position_x,color)
+			if dont4 == false:
+				move_position_y = pos1
+				move_position_x = pos2+move_queen
+				dont4 = addMoves(move_position_y,move_position_x,color)
+			if dont5 == false:
+				move_position_y = pos1-move_queen
+				move_position_x = pos2+move_queen
+				dont5 = addMoves(move_position_y,move_position_x,color)
+			if dont6 == false:
+				move_position_y = pos1+move_queen
+				move_position_x = pos2+move_queen
+				dont6 = addMoves(move_position_y,move_position_x,color)
+			if dont7 == false:
+				move_position_y = pos1+move_queen
+				move_position_x = pos2-move_queen
+				dont7 = addMoves(move_position_y,move_position_x,color)
+			if dont8 == false:
+				move_position_y = pos1-move_queen
+				move_position_x = pos2-move_queen
+				dont8 = addMoves(move_position_y,move_position_x,color)
 	if name_ == "king":
-		var move_position_y = pos1-1
-		var move_position_x = pos2
+		move_position_y = pos1-1
+		move_position_x = pos2
 		addMoves(move_position_y,move_position_x,color)
 		
 		move_position_y = pos1+1
@@ -260,21 +266,23 @@ func select(select,color):
 
 func addMoves(move_position_y,move_position_x,color):
 	var move = Move.instance()
+	var dont
 	move.setPosition([move_position_y,move_position_x])
-	if (move_position_x < 8 && move_position_x > -1) && (move_position_y < 8 && move_position_y > -1):
+	if (move_position_x < 8 && move_position_x >= 0) && (move_position_y < 8 && move_position_y > -1):
 		if map_[move_position_y][move_position_x] == null:
 			add_child(move)
 			moves_.append(move)
 			move.set_translation(Vector3((move_position_y)*3-10.5,0.7,move_position_x*3-10.5))
+			dont = false
 		else:
-			var dont = true
+			dont = true
 			if map_[move_position_y][move_position_x].getColor() != color: 
 	#			vyhozeni
 				add_child(move)
 				moves_.append(move)
 				moveMesh_.set_surface_material(0, preload("res://Materials/red_material.tres"))
 				move.set_translation(Vector3((move_position_y)*3-10.5,0.7,move_position_x*3-10.5))
-			return dont
+	return dont
 					
 func getMoveMesh(moveMesh):
 	moveMesh_ = moveMesh

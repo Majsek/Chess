@@ -27,6 +27,5 @@ func getMesh():
 
 func _on_RigidBody_input_event(camera: Node, event: InputEvent, click_position: Vector3, click_normal: Vector3, shape_idx: int) -> void:
 	if event.is_pressed():
-		yield(get_tree().create_timer(0.01),"timeout")
 		get_parent().select(self,getColor())
 		getMesh().set_surface_material(0, preload("res://Materials/selected_material.tres"))
