@@ -135,29 +135,139 @@ func select(select,color):
 			var move_position_x = pos2
 			addMoves(move_position_y,move_position_x,color)
 	if name_ == "rook":
-		for move_rook in range (2):
-			var move_position_y = pos1-move_rook+move_side
+		for move_rook in range (8):
+			var move_position_y = pos1-move_rook
 			var move_position_x = pos2
 			addMoves(move_position_y,move_position_x,color)
+			
+			move_position_y = pos1+move_rook
+			move_position_x = pos2
+			addMoves(move_position_y,move_position_x,color)
+			
+			move_position_y = pos1
+			move_position_x = pos2-move_rook
+			addMoves(move_position_y,move_position_x,color)
+			
+			move_position_y = pos1
+			move_position_x = pos2+move_rook
+			addMoves(move_position_y,move_position_x,color)
+	if name_ == "knight":
+		for move_knight in [0,1]:
+			var move_position_y = pos1+2+(move_knight*-1)
+			var move_position_x = pos2+1+(move_knight*+1)
+			addMoves(move_position_y,move_position_x,color)
+			
+			move_position_y = pos1+2+(move_knight*-1)
+			move_position_x = pos2-1+(move_knight*-1)
+			addMoves(move_position_y,move_position_x,color)
+			
+			move_position_y = pos1-2+move_knight*+1
+			move_position_x = pos2+1+move_knight*+1
+			addMoves(move_position_y,move_position_x,color)
+			
+			move_position_y = pos1-2+move_knight*+1
+			move_position_x = pos2-1+move_knight*-1
+			addMoves(move_position_y,move_position_x,color)
+	if name_ == "bishop":
+		for move_bishop in range (8):
+			var move_position_y = pos1-move_bishop
+			var move_position_x = pos2+move_bishop
+			addMoves(move_position_y,move_position_x,color)
+			
+			move_position_y = pos1+move_bishop
+			move_position_x = pos2+move_bishop
+			addMoves(move_position_y,move_position_x,color)
+			
+			move_position_y = pos1+move_bishop
+			move_position_x = pos2-move_bishop
+			addMoves(move_position_y,move_position_x,color)
+			
+			move_position_y = pos1-move_bishop
+			move_position_x = pos2-move_bishop
+			addMoves(move_position_y,move_position_x,color)
+	if name_ == "queen":
+		for move_queen in range (8):
+			var move_position_y = pos1-move_queen
+			var move_position_x = pos2
+			addMoves(move_position_y,move_position_x,color)
+			
+			move_position_y = pos1+move_queen
+			move_position_x = pos2
+			addMoves(move_position_y,move_position_x,color)
+			
+			move_position_y = pos1
+			move_position_x = pos2-move_queen
+			addMoves(move_position_y,move_position_x,color)
+			
+			move_position_y = pos1
+			move_position_x = pos2+move_queen
+			addMoves(move_position_y,move_position_x,color)
+			
+			move_position_y = pos1-move_queen
+			move_position_x = pos2+move_queen
+			addMoves(move_position_y,move_position_x,color)
+			
+			move_position_y = pos1+move_queen
+			move_position_x = pos2+move_queen
+			addMoves(move_position_y,move_position_x,color)
+			
+			move_position_y = pos1+move_queen
+			move_position_x = pos2-move_queen
+			addMoves(move_position_y,move_position_x,color)
+			
+			move_position_y = pos1-move_queen
+			move_position_x = pos2-move_queen
+			addMoves(move_position_y,move_position_x,color)
+	if name_ == "king":
+		var move_position_y = pos1-1
+		var move_position_x = pos2
+		addMoves(move_position_y,move_position_x,color)
+		
+		move_position_y = pos1+1
+		move_position_x = pos2
+		addMoves(move_position_y,move_position_x,color)
+		
+		move_position_y = pos1
+		move_position_x = pos2-1
+		addMoves(move_position_y,move_position_x,color)
+		
+		move_position_y = pos1
+		move_position_x = pos2+1
+		addMoves(move_position_y,move_position_x,color)
+		
+		move_position_y = pos1-1
+		move_position_x = pos2+1
+		addMoves(move_position_y,move_position_x,color)
+		
+		move_position_y = pos1+1
+		move_position_x = pos2+1
+		addMoves(move_position_y,move_position_x,color)
+		
+		move_position_y = pos1+1
+		move_position_x = pos2-1
+		addMoves(move_position_y,move_position_x,color)
+		
+		move_position_y = pos1-1
+		move_position_x = pos2-1
+		addMoves(move_position_y,move_position_x,color)
 
 func addMoves(move_position_y,move_position_x,color):
 	var move = Move.instance()
 	move.setPosition([move_position_y,move_position_x])
-	if map_[move_position_y][move_position_x] == null:
-		add_child(move)
-		moves_.append(move)
-		move.set_translation(Vector3((move_position_y)*3-10.5,0.7,move_position_x*3-10.5))
-	else: if map_[move_position_y][move_position_x].getColor() != color: 
-#			vyhozeni
-		add_child(move)
-		moves_.append(move)
-		moveMesh_.set_surface_material(0, preload("res://Materials/red_material.tres"))
-		move.set_translation(Vector3((move_position_y)*3-10.5,0.7,move_position_x*3-10.5))
-		
+	if (move_position_x < 8 && move_position_x > -1) && (move_position_y < 8 && move_position_y > -1):
+		if map_[move_position_y][move_position_x] == null:
+			add_child(move)
+			moves_.append(move)
+			move.set_translation(Vector3((move_position_y)*3-10.5,0.7,move_position_x*3-10.5))
+		else: if map_[move_position_y][move_position_x].getColor() != color: 
+	#			vyhozeni
+			add_child(move)
+			moves_.append(move)
+			moveMesh_.set_surface_material(0, preload("res://Materials/red_material.tres"))
+			move.set_translation(Vector3((move_position_y)*3-10.5,0.7,move_position_x*3-10.5))
 
 func getMoveMesh(moveMesh):
 	moveMesh_ = moveMesh
-	
 
 func move(move_position):
 	select_.set_translation(Vector3(move_position[0]*3-10.5,10,move_position[1]*3-10.5))
@@ -168,7 +278,6 @@ func move(move_position):
 	map_[select_pos[0]][select_pos[1]] = null
 	map_[move_position[0]][move_position[1]] = select_
 #	select_.get_child(0).sleeping = false
-	
 func who(name):
 	name_ = name
 	print(name_)
@@ -178,6 +287,9 @@ func _input(event):
 		if event.is_pressed():
 			if select_:
 				select_.resetColor(select_.getColor())
+				for i in moves_:
+					i.queue_free()
+				moves_.clear()
 
 
 #func _process(delta: float) -> void:
@@ -189,6 +301,3 @@ func _input(event):
 #
 #
 #	pass
-
-
-
