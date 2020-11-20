@@ -2,6 +2,7 @@ extends Spatial
 
 var color_
 var select_
+var first_move_ := true
 
 
 # Called when the node enters the scene tree for the first time.
@@ -24,6 +25,12 @@ func getColor():
 
 func getMesh():
 	return $RigidBody/MeshInstance
+	
+func firstMoveDone():
+	first_move_ = false
+	
+func isFirstMove() -> bool:
+	return first_move_
 
 func _on_RigidBody_input_event(camera: Node, event: InputEvent, click_position: Vector3, click_normal: Vector3, shape_idx: int) -> void:
 	if event.is_pressed():

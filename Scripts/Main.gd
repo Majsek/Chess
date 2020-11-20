@@ -144,6 +144,9 @@ func select(select,color):
 			move_position_y = pos1-move_pawn+move_side
 			move_position_x = pos2
 			addMoves(move_position_y,move_position_x,color)
+			if select_.isFirstMove() == false:
+				break
+		
 	if name_ == "rook":
 		for move_rook in range (1,8):
 			if dont1 == false:
@@ -295,6 +298,7 @@ func move(move_position):
 	var select_pos = getSelectPosition()
 	map_[select_pos[0]][select_pos[1]] = null
 	map_[move_position[0]][move_position[1]] = select_
+	select_.firstMoveDone()
 #	select_.get_child(0).sleeping = false
 func who(name):
 	name_ = name
