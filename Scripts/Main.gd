@@ -325,6 +325,7 @@ func move(move_position):
 	if map_[move_position[0]][move_position[1]] != null:
 		map_[move_position[0]][move_position[1]].get_child(0).set_mode(RigidBody.MODE_RIGID)
 		select_.set_translation(Vector3(move_position[0]*3-10.5,10,move_position[1]*3-10.5))
+		select_.addKillCount()
 		freeFigure(map_[move_position[0]][move_position[1]])
 	else:
 		select_.set_translation(Vector3(move_position[0]*3-10.5,10,move_position[1]*3-10.5))
