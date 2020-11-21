@@ -6,7 +6,8 @@
 [sub_resource type="CapsuleMesh" id=1]
 
 [sub_resource type="CapsuleShape" id=2]
-height = 0.002
+margin = 0.001
+height = 0.01
 
 [node name="Move" type="Spatial"]
 script = ExtResource( 2 )
@@ -21,6 +22,6 @@ collision_layer = 2
 collision_mask = 0
 
 [node name="CollisionShape" type="CollisionShape" parent="Area"]
-transform = Transform( 1.5, 0, 0, 0, 0.01, 0, 0, 0, 1.5, 0, 0.1, 0 )
+transform = Transform( 1.5, 0, 0, 0, 3, 0, 0, 0, 1.5, 0, 0.1, 0 )
 shape = SubResource( 2 )
 [connection signal="input_event" from="Area" to="." method="_on_Area_input_event"]

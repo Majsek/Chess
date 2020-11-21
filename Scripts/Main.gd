@@ -137,11 +137,28 @@ func select(select,color):
 	var move_position_x
 	if name_ == "pawn":
 		if color == "white":
-			move_side = +2
+			move_side = +1
+			if map_[pos1+move_side][pos2+move_side] != null:
+				var move = Move.instance()
+				move.setPosition([pos1+move_side,pos2+move_side])
+				addTakeMove(pos1+move_side,pos2+move_side,color,move)
+			if map_[pos1+move_side][pos2-move_side] != null:
+				var move = Move.instance()
+				move.setPosition([pos1+move_side,pos2-move_side])
+				addTakeMove(pos1+move_side,pos2-move_side,color,move)
 		if color == "black":
 			move_side = -1
+			if map_[pos1+move_side][pos2+move_side] != null:
+				var move = Move.instance()
+				move.setPosition([pos1+move_side,pos2+move_side])
+				addTakeMove(pos1+move_side,pos2+move_side,color,move)
+			if map_[pos1+move_side][pos2-move_side] != null:
+				var move = Move.instance()
+				move.setPosition([pos1+move_side,pos2-move_side])
+				addTakeMove(pos1+move_side,pos2-move_side,color,move)
+			
 		for move_pawn in range (2):
-			move_position_y = pos1-move_pawn+move_side
+			move_position_y = pos1+(move_pawn+1)*move_side
 			move_position_x = pos2
 			addMoves(move_position_y,move_position_x,color)
 			if select_.isFirstMove() == false:
@@ -279,27 +296,39 @@ func addMoves(move_position_y,move_position_x,color):
 			dont = false
 		else:
 			dont = true
-			if map_[move_position_y][move_position_x].getColor() != color: 
+			if name_ != "pawn":
+				addTakeMove(move_position_y,move_position_x,color,move)
+	return dont
+	
+func addTakeMove(move_position_y,move_position_x,color,move):
+	if map_[move_position_y][move_position_x].getColor() != color: 
 	#			vyhozeni
 				add_child(move)
 				moves_.append(move)
 				moveMesh_.set_surface_material(0, preload("res://Materials/red_material.tres"))
 				move.set_translation(Vector3((move_position_y)*3-10.5,0.7,move_position_x*3-10.5))
-	return dont
-					
 func getMoveMesh(moveMesh):
 	moveMesh_ = moveMesh
 
 func move(move_position):
-	select_.set_translation(Vector3(move_position[0]*3-10.5,10,move_position[1]*3-10.5))
+#	var map_move_position = map_[move_position[0]][move_position[1]]
 	for i in moves_:
 		i.queue_free()
 	moves_.clear()
+	if map_[move_position[0]][move_position[1]] != null:
+		map_[move_position[0]][move_position[1]].get_child(0).set_mode(RigidBody.MODE_RIGID)
+		select_.set_translation(Vector3(move_position[0]*3-10.5,10,move_position[1]*3-10.5))
+		freeFigure(map_[move_position[0]][move_position[1]])
+	else:
+		select_.set_translation(Vector3(move_position[0]*3-10.5,10,move_position[1]*3-10.5))
 	var select_pos = getSelectPosition()
 	map_[select_pos[0]][select_pos[1]] = null
 	map_[move_position[0]][move_position[1]] = select_
 	select_.firstMoveDone()
-#	select_.get_child(0).sleeping = false
+
+func freeFigure(figure):
+	yield(get_tree().create_timer(2.5),"timeout")
+	figure.queue_free()
 func who(name):
 	name_ = name
 	print(name_)
