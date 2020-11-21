@@ -142,6 +142,7 @@ func select(select,color):
 		var dont8 = false
 		var move_position_y
 		var move_position_x
+		select_.getMesh().set_surface_material(0, preload("res://Materials/selected_material.tres"))
 		if name_ == "pawn":
 			if color == "white":
 				move_side = +1
