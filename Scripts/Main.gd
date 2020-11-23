@@ -28,7 +28,22 @@ var turn_ = 0
 func _ready() -> void:
 	randomize()
 	
-	
+	var texture = ImageTexture.new()
+	var image = Image.new()
+	image.create(850, 850, false, Image.FORMAT_RGB8)
+	image.fill(Color(100, 100, 100))
+	image.lock() # To enable drawing with setpixel later
+	for i in range(100):
+		for j in range(100):
+			for k in range(8):
+				image.set_pixel(25+i+100*k, 25+j+100*k, Color(0, 0, 0))
+	image.unlock()
+	texture.create_from_image(image)
+	var mat = SpatialMaterial.new()
+	mat.albedo_texture = texture
+	mat.uv1_scale = Vector3(4, 4, 0)
+	mat.uv1_offset = Vector3(0.5, 0, 0)
+	$StaticBody/desk.set_surface_material(0, mat)
 	
 	map_ = []
 	var map = map_
