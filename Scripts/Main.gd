@@ -31,12 +31,27 @@ func _ready() -> void:
 	var texture = ImageTexture.new()
 	var image = Image.new()
 	image.create(850, 850, false, Image.FORMAT_RGB8)
-	image.fill(Color(100, 100, 100))
+	image.fill(Color(10, 255, 255))
 	image.lock() # To enable drawing with setpixel later
 	for i in range(100):
 		for j in range(100):
 			for k in range(8):
 				image.set_pixel(25+i+100*k, 25+j+100*k, Color(0, 0, 0))
+			for l in range(6):
+				image.set_pixel((225+i+100*l), (25+j+100*l), Color(0, 0, 0))
+				image.set_pixel((25+i+100*l), (225+j+100*l), Color(0, 0, 0))
+			for m in range(4):
+				image.set_pixel((25+i+100*m), (425+j+100*m), Color(0, 0, 0))
+				image.set_pixel((425+i+100*m), (25+j+100*m), Color(0, 0, 0))
+			for n in range(2):
+				image.set_pixel((25+i+100*n), (625+j+100*n), Color(0, 0, 0))
+				image.set_pixel((625+i+100*n), (25+j+100*n), Color(0, 0, 0))
+	for p in range(850):
+		for q in range(25):
+			image.set_pixel(p, q+825, Color(0, 0, 255))
+			image.set_pixel(q+825, p, Color(0, 0, 255))
+			image.set_pixel(p, q, Color(0, 0, 255))
+			image.set_pixel(q, p, Color(0, 0, 255))
 	image.unlock()
 	texture.create_from_image(image)
 	var mat = SpatialMaterial.new()
@@ -92,20 +107,20 @@ func _ready() -> void:
 		
 	var B_Queen = Queen.instance()
 	B_Queen.resetColor("black")
-	map[7][4] = B_Queen
+	map[7][3] = B_Queen
 	add_child(B_Queen)
 	var W_Queen = Queen.instance()
 	W_Queen.resetColor("white")
-	map[0][4] = W_Queen
+	map[0][3] = W_Queen
 	add_child(W_Queen)
 	
 	var B_King = King.instance()
 	B_King.resetColor("black")
-	map[7][3] = B_King
+	map[7][4] = B_King
 	add_child(B_King)
 	var W_King = King.instance()
 	W_King.resetColor("white")
-	map[0][3] = W_King
+	map[0][4] = W_King
 	add_child(W_King)
 	
 	print(map)
@@ -339,16 +354,33 @@ func move(move_position):
 	moves_.clear()
 	if map_[move_position[0]][move_position[1]] != null:
 		map_[move_position[0]][move_position[1]].get_child(0).set_mode(RigidBody.MODE_RIGID)
-		select_.set_translation(Vector3(move_position[0]*3-10.5,10,move_position[1]*3-10.5))
+		moveAnimation(move_position)
+		
 		select_.addKillCount()
 		freeFigure(map_[move_position[0]][move_position[1]])
 	else:
-		select_.set_translation(Vector3(move_position[0]*3-10.5,10,move_position[1]*3-10.5))
+		moveAnimation(move_position)
 	var select_pos = getSelectPosition()
 	map_[select_pos[0]][select_pos[1]] = null
 	map_[move_position[0]][move_position[1]] = select_
 	select_.firstMoveDone()
 	nextTurn()
+	
+func moveAnimation(move_position):
+		var previous_position = getSelectPosition()
+		while previous_position[0] != move_position[0] || previous_position[1] != move_position[1]:
+			if previous_position[0] >= move_position[0]:
+				previous_position[0] -= 0.1
+			else:
+				previous_position[0] += 0.1
+				
+			if previous_position[1] >= move_position[1]:
+				previous_position[1] -= 0.1
+			else:
+				previous_position[1] += 0.1
+			select_.set_translation(Vector3(previous_position[0]*3-10.5,10,previous_position[1]*3-10.5))
+			yield(get_tree().create_timer(0.01),"timeout")
+	
 func nextTurn():
 	turn_ += 1
 	print(turn_)
