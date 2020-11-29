@@ -354,32 +354,19 @@ func move(move_position):
 	moves_.clear()
 	if map_[move_position[0]][move_position[1]] != null:
 		map_[move_position[0]][move_position[1]].get_child(0).set_mode(RigidBody.MODE_RIGID)
-		moveAnimation(move_position)
+		select_.moveAnimation(move_position)
 		
 		select_.addKillCount()
 		freeFigure(map_[move_position[0]][move_position[1]])
 	else:
-		moveAnimation(move_position)
+		select_.moveAnimation(move_position)
 	var select_pos = getSelectPosition()
 	map_[select_pos[0]][select_pos[1]] = null
 	map_[move_position[0]][move_position[1]] = select_
 	select_.firstMoveDone()
 	nextTurn()
 	
-func moveAnimation(move_position):
-		var previous_position = getSelectPosition()
-		while previous_position[0] != move_position[0] || previous_position[1] != move_position[1]:
-			if previous_position[0] >= move_position[0]:
-				previous_position[0] -= 0.1
-			else:
-				previous_position[0] += 0.1
-				
-			if previous_position[1] >= move_position[1]:
-				previous_position[1] -= 0.1
-			else:
-				previous_position[1] += 0.1
-			select_.set_translation(Vector3(previous_position[0]*3-10.5,10,previous_position[1]*3-10.5))
-			yield(get_tree().create_timer(0.01),"timeout")
+
 	
 func nextTurn():
 	turn_ += 1

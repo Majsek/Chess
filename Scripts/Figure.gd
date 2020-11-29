@@ -4,12 +4,14 @@ var color_
 var select_
 var first_move_ := true
 var kill_count_ = 0
+onready var animation_player_ = AnimationPlayer.new()
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	yield(get_tree().create_timer(2.5),"timeout")
 	$RigidBody.set_mode(RigidBody.MODE_STATIC)
+	add_child(animation_player_)
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta: float) -> void:
 #	pass
@@ -48,6 +50,21 @@ func addKillCount():
 	
 func getKillCount():
 	return kill_count_
+
+
+func moveAnimation(move_position):
+	var previous_position = get_parent().getSelectPosition()
+	var anim = Animation.new()
+	
+	var track_index = anim.add_track(Animation.TYPE_VALUE)
+	anim.track_set_path(track_index, ":translation")
+	anim.track_insert_key(track_index, 0.0,
+	Vector3(previous_position[0]*3-10.5,10,previous_position[1]*3-10.5))
+	anim.track_insert_key(track_index, 0.5,
+	Vector3(move_position[0]*3-10.5,10,move_position[1]*3-10.5))
+#	translation = Vector3(move_position[0]*3-10.5,10,move_position[1]*3-10.5)
+	animation_player_.add_animation("anim_name", anim)
+	animation_player_.play("anim_name")
 	
 func _on_RigidBody_input_event(camera: Node, event: InputEvent, click_position: Vector3, click_normal: Vector3, shape_idx: int) -> void:
 	if event.is_pressed():
