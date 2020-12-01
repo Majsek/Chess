@@ -59,9 +59,9 @@ func moveAnimation(move_position):
 	var track_index = anim.add_track(Animation.TYPE_VALUE)
 	anim.track_set_path(track_index, ":translation")
 	anim.track_insert_key(track_index, 0.0,
-	Vector3(previous_position[0]*3-10.5,10,previous_position[1]*3-10.5))
-	anim.track_insert_key(track_index, 0.5,
-	Vector3(move_position[0]*3-10.5,10,move_position[1]*3-10.5))
+	Vector3(previous_position[0]*3-10.5,10,previous_position[1]*3-10.5), 0.15)
+	anim.track_insert_key(track_index, 1,
+	Vector3(move_position[0]*3-10.5,10,move_position[1]*3-10.5),0.15)
 #	translation = Vector3(move_position[0]*3-10.5,10,move_position[1]*3-10.5)
 	animation_player_.add_animation("anim_name", anim)
 	animation_player_.play("anim_name")

@@ -196,11 +196,12 @@ func select(select,color):
 					addTakeMove(pos1+move_side,pos2-move_side,color,move)
 				
 			for move_pawn in range (2):
-				move_position_y = pos1+(move_pawn+1)*move_side
-				move_position_x = pos2
-				addMoves(move_position_y,move_position_x,color)
-				if select_.isFirstMove() == false:
-					break
+				if dont1 == false:
+					move_position_y = pos1+(move_pawn+1)*move_side
+					move_position_x = pos2
+					dont1 = addMoves(move_position_y,move_position_x,color)
+					if select_.isFirstMove() == false:
+						break
 		if name_ == "rook":
 			for move_rook in range (1,8):
 				if dont1 == false:
@@ -335,6 +336,8 @@ func addMoves(move_position_y,move_position_x,color):
 			dont = true
 			if name_ != "pawn":
 				addTakeMove(move_position_y,move_position_x,color,move)
+#			if name_ == "pawn":
+#				don
 	return dont
 	
 func addTakeMove(move_position_y,move_position_x,color,move):
@@ -366,7 +369,23 @@ func move(move_position):
 	select_.firstMoveDone()
 	nextTurn()
 	
-
+#func ableToTake():
+#	var check_map = []
+#	check_map.resize(8)
+#	for pos in range(8):
+#		check_map[pos] = []
+#		check_map[pos].resize(8)
+#	if (move_position_x < 8 && move_position_x >= 0) && (move_position_y < 8 && move_position_y > -1):
+#		if map_[move_position_y][move_position_x] == null:
+#			add_child(move)
+#			moves_.append(move)
+#			move.set_translation(Vector3((move_position_y)*3-10.5,0.7,move_position_x*3-10.5))
+#			dont = false
+#		else:
+#			dont = true
+#			if name_ != "pawn":
+#				addTakeMove(move_position_y,move_position_x,color,move)
+#	return dont
 	
 func nextTurn():
 	turn_ += 1
