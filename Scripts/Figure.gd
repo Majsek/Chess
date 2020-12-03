@@ -53,7 +53,7 @@ func getKillCount():
 
 
 func moveAnimation(move_position):
-	var previous_position = get_parent().getSelectPosition()
+	var previous_position = get_parent().getSelectPosition(self)
 	var anim = Animation.new()
 	
 	var track_index = anim.add_track(Animation.TYPE_VALUE)
