@@ -8,7 +8,8 @@ var Queen = preload("res://Scenes/Queen.tscn")
 var King = preload("res://Scenes/King.tscn")
 var Move = preload("res://Scenes/Move.tscn")
 
-var map_
+var map_ = []
+var check_map_ = []
 var select_
 var mesh_
 var name_
@@ -30,12 +31,16 @@ func _ready() -> void:
 	
 	drawTexture()
 	
-	map_ = []
 	var map = map_
 	map.resize(8)
 	for pos in range(8):
 		map[pos] = []
 		map[pos].resize(8)
+	
+	check_map_.resize(8)
+	for pos in range(8):
+		check_map_[pos] = []
+		check_map_[pos].resize(8)
 	
 	for Pawns in range(8):
 		var B_pawn = Pawn.instance()
@@ -380,11 +385,6 @@ func move(move_position):
 	drawTexture()
 	
 #func ableToTake():
-#	var check_map = []
-#	check_map.resize(8)
-#	for pos in range(8):
-#		check_map[pos] = []
-#		check_map[pos].resize(8)
 #	if (move_position_x < 8 && move_position_x >= 0) && (move_position_y < 8 && move_position_y > -1):
 #		if map_[move_position_y][move_position_x] == null:
 #			add_child(move)
@@ -396,12 +396,17 @@ func move(move_position):
 #			if name_ != "pawn":
 #				addTakeMove(move_position_y,move_position_x,color,move)
 #	return dont
-#
+func checkPosition(pos1,pos2,color):
+	if map_[pos1][pos2].getColor() != color:
+		check_map_[pos1][pos2] = true
+
 func addToCheckMap():
 	for figure in map_:
-		var pos = getSelectPosition(select)
+		var pos = getSelectPosition(figure)
 		var pos1 = pos[0]
 		var pos2 = pos[1]
+		var figure_color = figure.getColor()
+		var figure_name = figure.getName()
 		var move_side
 		var dont1 = false
 		var dont2 = false
@@ -413,36 +418,19 @@ func addToCheckMap():
 		var dont8 = false
 		var move_position_y
 		var move_position_x
-		select_.getMesh().set_surface_material(0, preload("res://Materials/selected_material.tres"))
-		if name_ == "pawn":
-			if color == "white":
+		if figure_name == "pawn":
+			if figure_color == "white":
 				move_side = +1
 				if map_[pos1+move_side][pos2+move_side] != null:
-					var move = Move.instance()
-					move.setPosition([pos1+move_side,pos2+move_side])
-					addTakeMove(pos1+move_side,pos2+move_side,color,move)
+					checkPosition(pos1+move_side,pos2+move_side,figure_color)
 				if map_[pos1+move_side][pos2-move_side] != null:
-					var move = Move.instance()
-					move.setPosition([pos1+move_side,pos2-move_side])
-					addTakeMove(pos1+move_side,pos2-move_side,color,move)
-			if color == "black":
+					checkPosition(pos1+move_side,pos2+move_side,figure_color)
+			if figure_color == "black":
 				move_side = -1
 				if map_[pos1+move_side][pos2+move_side] != null:
-					var move = Move.instance()
-					move.setPosition([pos1+move_side,pos2+move_side])
-					addTakeMove(pos1+move_side,pos2+move_side,color,move)
+					checkPosition(pos1+move_side,pos2+move_side,figure_color)
 				if map_[pos1+move_side][pos2-move_side] != null:
-					var move = Move.instance()
-					move.setPosition([pos1+move_side,pos2-move_side])
-					addTakeMove(pos1+move_side,pos2-move_side,color,move)
-
-			for move_pawn in range (2):
-				if dont1 == false:
-					move_position_y = pos1+(move_pawn+1)*move_side
-					move_position_x = pos2
-					dont1 = addMoves(move_position_y,move_position_x,color)
-					if select_.isFirstMove() == false:
-						break
+					checkPosition(pos1+move_side,pos2+move_side,figure_color)
 		if name_ == "rook":
 			for move_rook in range (1,8):
 				if dont1 == false:
