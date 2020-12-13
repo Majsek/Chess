@@ -394,6 +394,7 @@ func ableToTake(pos1,pos2,color):
 	if (pos2 < 8 && pos2 >= 0) && (pos1 < 8 && pos1 > -1):
 		if map_[pos1][pos2] == null:
 			dont = false
+			check_map_[pos1][pos2] = color
 		else:
 			dont = true
 			checkPosition(pos1,pos2,color)
@@ -401,7 +402,7 @@ func ableToTake(pos1,pos2,color):
 	
 func checkPosition(pos1,pos2,color):
 	if map_[pos1][pos2].getColor() != color:
-		check_map_[pos1][pos2] = pos2
+		check_map_[pos1][pos2] = color
 
 func clearCheckMap():
 	for i in (8):
