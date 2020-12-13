@@ -434,18 +434,18 @@ func resetCheckMap():
 				if figure_name == "pawn":
 					if figure_color == "white":
 						move_side = +1
-						if pos2+move_side < 8:
-							if map_[pos1+move_side][pos2+move_side] != null:
-								checkPosition(pos1+move_side,pos2+move_side,figure_color)
-						if map_[pos1+move_side][pos2-move_side] != null:
-							checkPosition(pos1+move_side,pos2+move_side,figure_color)
+#						if pos2+move_side < 8:
+#							if map_[pos1+move_side][pos2+move_side] != null:
+						ableToTake(pos1+move_side,pos2+move_side,figure_color)
+#						if map_[pos1+move_side][pos2-move_side] != null:
+						ableToTake(pos1+move_side,pos2+move_side,figure_color)
 					if figure_color == "black":
 						move_side = -1
-						if map_[pos1+move_side][pos2+move_side] != null:
-							checkPosition(pos1+move_side,pos2+move_side,figure_color)
-						if pos2-move_side < 8:
-							if map_[pos1+move_side][pos2-move_side] != null:
-								checkPosition(pos1+move_side,pos2+move_side,figure_color)
+#						if map_[pos1+move_side][pos2+move_side] != null:
+						ableToTake(pos1+move_side,pos2+move_side,figure_color)
+#						if pos2-move_side < 8:
+#							if map_[pos1+move_side][pos2-move_side] != null:
+						ableToTake(pos1+move_side,pos2+move_side,figure_color)
 				if figure_name == "rook":
 					for move_rook in range (1,8):
 						if dont1 == false:
