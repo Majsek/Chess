@@ -397,12 +397,9 @@ func ableToTake(pos1,pos2,color):
 			check_map_[pos1][pos2] = color
 		else:
 			dont = true
-			checkPosition(pos1,pos2,color)
+			if map_[pos1][pos2].getColor() != color:
+				check_map_[pos1][pos2] = color
 	return dont
-	
-func checkPosition(pos1,pos2,color):
-	if map_[pos1][pos2].getColor() != color:
-		check_map_[pos1][pos2] = color
 
 func clearCheckMap():
 	for i in (8):
@@ -434,17 +431,11 @@ func resetCheckMap():
 				if figure_name == "pawn":
 					if figure_color == "white":
 						move_side = +1
-#						if pos2+move_side < 8:
-#							if map_[pos1+move_side][pos2+move_side] != null:
 						ableToTake(pos1+move_side,pos2+move_side,figure_color)
-#						if map_[pos1+move_side][pos2-move_side] != null:
 						ableToTake(pos1+move_side,pos2+move_side,figure_color)
 					if figure_color == "black":
 						move_side = -1
-#						if map_[pos1+move_side][pos2+move_side] != null:
 						ableToTake(pos1+move_side,pos2+move_side,figure_color)
-#						if pos2-move_side < 8:
-#							if map_[pos1+move_side][pos2-move_side] != null:
 						ableToTake(pos1+move_side,pos2+move_side,figure_color)
 				if figure_name == "rook":
 					for move_rook in range (1,8):
