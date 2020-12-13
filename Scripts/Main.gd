@@ -157,7 +157,6 @@ func getSelectPosition(select):
 	for check in range(8):
 		for check2 in range(8):
 			if map_[check][check2] == select:
-				print(check,check2)
 				return [check,check2]
 
 func select(select,color):
@@ -175,6 +174,7 @@ func select(select,color):
 		var pos = getSelectPosition(select_)
 		var pos1 = pos[0]
 		var pos2 = pos[1]
+		print("y=",str(pos1)," x=",str(pos2))
 		var move_side
 		var dont1 = false
 		var dont2 = false
@@ -559,7 +559,6 @@ func resetCheckMap():
 		
 func nextTurn():
 	turn_ += 1
-	print(turn_)
 func getTurn():
 	return turn_
 func freeFigure(figure):
@@ -567,7 +566,6 @@ func freeFigure(figure):
 	figure.queue_free()
 func who(name):
 	name_ = name
-	print(name_)
 
 func _input(event):
 	if event is InputEventMouseButton:
