@@ -16,6 +16,9 @@ var name_
 var moves_ = []
 var moveMesh_
 var turn_ = 0
+var white_king_pos_
+var black_king_pos_
+var check_
 
 #export (PackedScene) var Pawn
 #export (PackedScene) var Figure
@@ -41,6 +44,10 @@ func _ready() -> void:
 	for pos in range(8):
 		check_map_[pos] = []
 		check_map_[pos].resize(8)
+		for pos2 in range(8):
+			check_map_[pos][pos2] = []
+			check_map_[pos][pos2].resize(2)
+	print(check_map_)
 	
 	for Pawns in range(8):
 		var B_pawn = Pawn.instance()
@@ -389,22 +396,48 @@ func move(move_position):
 	resetCheckMap()
 	print(check_map_)
 	
+	checkForCheck()
+	print(check_)
+	
+func setKingPos(pos1,pos2,color):
+	if color == "white":
+		white_king_pos_ = [pos1,pos2]
+	else:
+		black_king_pos_ = [pos1,pos2]
+	
+func checkForCheck():
+	if check_map_[white_king_pos_[0]][white_king_pos_[1]][0] == "black":
+		check_ = true
+	else:
+		check_ = false
+		
+	if check_map_[black_king_pos_[0]][black_king_pos_[1]][0] == "white":
+		check_ = true
+	else:
+		check_ = false
 func ableToTake(pos1,pos2,color):
 	var dont
 	if (pos2 < 8 && pos2 >= 0) && (pos1 < 8 && pos1 > -1):
+		var index_color
+		if color == "white":
+			index_color = 0
+		else:
+			index_color = 1
 		if map_[pos1][pos2] == null:
 			dont = false
-			check_map_[pos1][pos2] = color
+			check_map_[pos1][pos2][index_color] = color
 		else:
 			dont = true
 			if map_[pos1][pos2].getColor() != color:
-				check_map_[pos1][pos2] = color
+				
+				check_map_[pos1][pos2][index_color] = color
 	return dont
 
 func clearCheckMap():
 	for i in (8):
 		for l in (8):
-			check_map_[i][l] = null
+			for j in (2):
+				check_map_[i][l][j] = null
 
 func resetCheckMap():
 	clearCheckMap()
@@ -525,6 +558,8 @@ func resetCheckMap():
 							move_position_x = pos2-move_queen
 							dont8 = ableToTake(move_position_y,move_position_x,figure_color)
 				if figure_name == "king":
+					setKingPos(pos1,pos2,figure_color)
+					
 					move_position_y = pos1-1
 					move_position_x = pos2
 					ableToTake(move_position_y,move_position_x,figure_color)
