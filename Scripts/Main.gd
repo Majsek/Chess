@@ -19,6 +19,8 @@ var turn_ = 0
 var white_king_pos_
 var black_king_pos_
 var check_
+var white_check_ = 0
+var black_check_ = 0
 
 #export (PackedScene) var Pawn
 #export (PackedScene) var Figure
@@ -407,14 +409,21 @@ func setKingPos(pos1,pos2,color):
 	
 func checkForCheck():
 	if check_map_[white_king_pos_[0]][white_king_pos_[1]][0] == "black":
-		check_ = true
+		white_check_ += 1
+		print("White check")
+		if white_check_ == 2:
+			print("White check mate")
 	else:
-		check_ = false
+		white_check_ = 0
 		
 	if check_map_[black_king_pos_[0]][black_king_pos_[1]][0] == "white":
-		check_ = true
+		black_check_ += 1
+		print("Black check")
+		if black_check_ == 2:
+			print("Black check mate")
 	else:
-		check_ = false
+		black_check_ = 0
+		
 func ableToTake(pos1,pos2,color):
 	var dont
 	if (pos2 < 8 && pos2 >= 0) && (pos1 < 8 && pos1 > -1):
