@@ -18,7 +18,6 @@ var moveMesh_
 var turn_ = 0
 var white_king_pos_
 var black_king_pos_
-var check_
 var white_check_ = 0
 var black_check_ = 0
 
@@ -315,37 +314,51 @@ func select(select,color):
 					move_position_x = pos2-move_queen
 					dont8 = addMoves(move_position_y,move_position_x,color)
 		if name_ == "king":
+			var index_color
+			if color == "white":
+				index_color = 1
+			else:
+				index_color = 0
+			
 			move_position_y = pos1-1
 			move_position_x = pos2
-			addMoves(move_position_y,move_position_x,color)
+			if check_map_[move_position_y][move_position_x][index_color] == null: 
+				addMoves(move_position_y,move_position_x,color)
 			
 			move_position_y = pos1+1
 			move_position_x = pos2
-			addMoves(move_position_y,move_position_x,color)
+			if check_map_[move_position_y][move_position_x][index_color] == null: 
+				addMoves(move_position_y,move_position_x,color)
 			
 			move_position_y = pos1
 			move_position_x = pos2-1
-			addMoves(move_position_y,move_position_x,color)
+			if check_map_[move_position_y][move_position_x][index_color] == null: 
+				addMoves(move_position_y,move_position_x,color)
 			
 			move_position_y = pos1
 			move_position_x = pos2+1
-			addMoves(move_position_y,move_position_x,color)
+			if check_map_[move_position_y][move_position_x][index_color] == null: 
+				addMoves(move_position_y,move_position_x,color)
 			
 			move_position_y = pos1-1
 			move_position_x = pos2+1
-			addMoves(move_position_y,move_position_x,color)
+			if check_map_[move_position_y][move_position_x][index_color] == null: 
+				addMoves(move_position_y,move_position_x,color)
 			
 			move_position_y = pos1+1
 			move_position_x = pos2+1
-			addMoves(move_position_y,move_position_x,color)
+			if check_map_[move_position_y][move_position_x][index_color] == null: 
+				addMoves(move_position_y,move_position_x,color)
 			
 			move_position_y = pos1+1
 			move_position_x = pos2-1
-			addMoves(move_position_y,move_position_x,color)
+			if check_map_[move_position_y][move_position_x][index_color] == null: 
+				addMoves(move_position_y,move_position_x,color)
 			
 			move_position_y = pos1-1
 			move_position_x = pos2-1
-			addMoves(move_position_y,move_position_x,color)
+			if check_map_[move_position_y][move_position_x][index_color] == null: 
+				addMoves(move_position_y,move_position_x,color)
 
 func addMoves(move_position_y,move_position_x,color):
 	var move = Move.instance()
@@ -399,7 +412,6 @@ func move(move_position):
 	print(check_map_)
 	
 	checkForCheck()
-	print(check_)
 	
 func setKingPos(pos1,pos2,color):
 	if color == "white":
@@ -408,7 +420,7 @@ func setKingPos(pos1,pos2,color):
 		black_king_pos_ = [pos1,pos2]
 	
 func checkForCheck():
-	if check_map_[white_king_pos_[0]][white_king_pos_[1]][0] == "black":
+	if check_map_[white_king_pos_[0]][white_king_pos_[1]][1] == "black":
 		white_check_ += 1
 		print("White check")
 		if white_check_ == 2:
