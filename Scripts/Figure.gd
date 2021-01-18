@@ -1,41 +1,64 @@
 extends Spatial
 
-var color_
-var select_
-var first_move_ := true
+var color_ : String
+var anti_color_ : String
+var position_ : Array = []
+var select_ : Node
+var first_move_ : bool = true
 var kill_count_ = 0
+var moves_ : Array = []
+var name_ : String
+var all_moves_ : Array = []
+var attack_moves_ : Array = []
+var blockers_ : Array = [null,null,null,null,null,null,null,null,null,null]
+#var check_blocking_ : bool = false
+var allowedDirection_ : int = 0
+onready var parent_ = get_parent()
 onready var animation_player_ = AnimationPlayer.new()
 
-
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	yield(get_tree().create_timer(2.5),"timeout")
+	yield(get_tree().create_timer(3),"timeout")
 	$RigidBody.set_mode(RigidBody.MODE_STATIC)
 	add_child(animation_player_)
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta: float) -> void:
-#	pass
 
-func resetColor(color):
+func initColor(color) -> void:
 	color_ = color
-	if color == "black":
-		getMesh().set_surface_material(0, preload("res://Materials/black_material.tres"))
 	if color == "white":
+		anti_color_ = "black"
+	else: anti_color_ = "white"
+	resetColor()
+	
+func resetColor() -> void:
+	if color_ == "black":
+		getMesh().set_surface_material(0, preload("res://Materials/black_material.tres"))
+	if color_ == "white":
 		getMesh().set_surface_material(0, preload("res://Materials/white_material.tres"))
 
-func getColor():
+func selectColor() -> void:
+	getMesh().set_surface_material(0, preload("res://Materials/selected_material.tres"))
+
+func setPosition(pos1,pos2) -> void:
+	position_ = [pos1,pos2]
+
+func getPosition() -> Array:
+	return position_
+
+func getColor() -> String:
 	return color_
 
-func getMesh():
+func getMesh() -> Node:
 	return $RigidBody/MeshInstance
 	
-func firstMoveDone():
+func getName() -> String:
+	return name_
+	
+func firstMoveDone() -> void:
 	first_move_ = false
 	
 func isFirstMove() -> bool:
 	return first_move_
 	
-func addKillCount():
+func addKillCount() -> void:
 	kill_count_ += 1
 	if kill_count_ == 2:
 		print("Doublekill!")
@@ -48,25 +71,164 @@ func addKillCount():
 	else: if kill_count_ == 6:
 		print("Hexakill")
 	
-func getKillCount():
+func getKillCount() -> int:
 	return kill_count_
 
-
-func moveAnimation(move_position):
-	var previous_position = get_parent().getSelectPosition(self)
+func moveAnimation(move_position) -> void:
+	var previous_position = getPosition()
 	var anim = Animation.new()
 	
 	var track_index = anim.add_track(Animation.TYPE_VALUE)
 	anim.track_set_path(track_index, ":translation")
+	
 	anim.track_insert_key(track_index, 0.0,
 	Vector3(previous_position[0]*3-10.5,10,previous_position[1]*3-10.5), 0.15)
 	anim.track_insert_key(track_index, 1,
 	Vector3(move_position[0]*3-10.5,10,move_position[1]*3-10.5),0.15)
-#	translation = Vector3(move_position[0]*3-10.5,10,move_position[1]*3-10.5)
+	
 	animation_player_.add_animation("anim_name", anim)
 	animation_player_.play("anim_name")
 	
-func _on_RigidBody_input_event(camera: Node, event: InputEvent, click_position: Vector3, click_normal: Vector3, shape_idx: int) -> void:
-	if event.is_pressed():
+func ableToMove(move_pos1,move_pos2, direction, dont : Array = [false,false]) -> Array:
+	if get_parent().checkIfBlocker(self):
+		print(color_ + name_ + "is blocking the King!")
+		# !(allowedDirection_ == 0 || direction == allowedDirection_)
+		#return 
+		if !(allowedDirection_ == 0 || direction == allowedDirection_ || direction == reverseDirection(allowedDirection_)):
+			return [true,true]
+	else:
+		allowedDirection_ = 0
+	if (move_pos2 < 8 && move_pos2 >= 0) && (move_pos1 < 8 && move_pos1 >= 0):
+		var move = [move_pos1,move_pos2]
+		var attackers = get_parent().getCheck()
+		var dont3 : bool = false
+		if attackers != []:
+			if attackers[0].getColor() != color_:
+				var attacker_pos = attackers[0].getPosition()
+				var king_pos = get_parent().getKingPos(color_)
+				var attacker_moves = attackers[0].getMoves()
+				attacker_moves.append(attackers[0].getPosition())
+				if !move in attacker_moves:
+					dont3 = true
+				
+				if dont3 == false:
+					var smaller = king_pos
+					var bigger = attacker_pos
+					if attacker_pos[0] == king_pos[0]:
+						if move_pos1 != king_pos[0]:
+							dont3 = true
+						else: 
+							if attacker_pos[1] < king_pos[1]:
+								smaller = attacker_pos
+								bigger = king_pos
+							if move_pos2 < smaller[1]:
+								dont3 = true
+							if move_pos2 > bigger[1]:
+								dont3 = true
+					else:
+						if attacker_pos[1] == king_pos[1]:
+							if move_pos2 != king_pos[1]:
+								dont3 = true
+							else:
+								if attacker_pos[0] < king_pos[0]:
+									smaller = attacker_pos
+									bigger = king_pos
+								if move_pos1 < smaller[0]:
+									dont3 = true
+								if move_pos1 > bigger[0]:
+									dont3 = true
+						else:
+							var minus = +1
+							if attacker_pos[0] < king_pos[0]:
+								smaller = attacker_pos
+								bigger = king_pos
+							if smaller[1] > bigger[1]:
+									minus = -1
+#							if attacker_pos[1] < king_pos[1]:
+#								smaller = attacker_pos
+#								bigger = king_pos
+							var difference = bigger[0] - smaller[0]
+							for i in range (difference):
+								if move_pos1 == (smaller[0] + i) && move_pos2 == (smaller[1] + i*minus):
+									dont3 = false
+									break
+								else: 
+									dont3 = true
+								
+		var someone = get_parent().getFromMap(move_pos1,move_pos2)
+		if someone == null:
+			if dont[0] == false:
+	#			addMove
+				if dont3 == false:
+					moves_.append(move)
+			
+#			attack_moves_.append(move)
+#			if check_blocking_ == false:
+				attack_moves_.append(move)
+
+		else:
+			if someone.getColor() != color_:
+				if dont[0] == false:
+					if dont3 == false:
+						moves_.append(move)
+					dont[0] = true
+#					addTakeMove
+#				check_blocking_ = true
+				if someone.getName() != "king":
+					blockers_[direction] = someone
+				else:
+					dont[1] = true
+#					check_blocking_ = false
+					get_parent().setBlocker(blockers_[direction])
+					blockers_[direction].setAllowedDirection(direction)
+			else:
+				dont[1] = true
+#				check_blocking_ = false
+#			if check_blocking_ == false:
+#				attack_moves_.append(move)
+#			attack_moves_.append(move)
+	return dont
+	
+func setAllowedDirection(direction) -> void:
+	allowedDirection_ = direction
+	
+func reverseDirection(direction : int) -> int:
+	return 10 - direction
+	
+#func ableToMove(move_pos1,move_pos2) -> bool:
+#	var dont = true
+#	if (move_pos2 < 8 && move_pos2 >= 0) && (move_pos1 < 8 && move_pos1 >= 0):
+#		var someone = get_parent().getFromMap(move_pos1,move_pos2)
+#		var move = [move_pos1,move_pos2]
+#		if someone == null:
+##			addMove
+#			moves_.append(move)
+#			dont = false
+#		else:
+#			dont = true
+#			if someone.getColor() != color_:
+##					addTakeMove
+#				moves_.append(move)
+#				if someone.getName() != "king":
+#					pass
+#			attack_moves_.append(move)
+#	return dont
+
+func checkForCheck() -> void:
+	if moves_ != [] || attack_moves_ != []:
+		get_parent().appendAllMoves(moves_,color_)
+		get_parent().appendAllMoves(attack_moves_,color_)
+		for move in moves_:
+			if get_parent().getKingPos(anti_color_) == move:
+				get_parent().setCheck(anti_color_,self)
+			
+func getMoves() -> Array:
+	return moves_
+		
+func _on_RigidBody_input_event(_camera: Node, _event: InputEvent, _click_position: Vector3, _click_normal: Vector3, _shape_idx: int) -> void:
+	if _event.is_pressed():
 		get_parent().select(self,getColor())
 		
+		
+#		zapise se do pole seznam movu tim smerem kde k tomu dojde, ten potom prida jako jediny moves, co bude mit blocker
+#		kazdej to bere postupne a stridaj se mu smery, proto to nefunguje, nejsou smery zasebou

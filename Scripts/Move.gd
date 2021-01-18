@@ -1,14 +1,16 @@
 extends Spatial
 
-var position_
+var position_ : Array
 
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	get_parent().getMoveMesh($MeshInstance)
-
-func setPosition(position):
+	pass
+func setPosition(position) -> void:
 	position_ = position
 
-func _on_Area_input_event(camera: Node, event: InputEvent, click_position: Vector3, click_normal: Vector3, shape_idx: int) -> void:
-	if event.is_pressed():
+func setMoveRed() -> void:
+	$MeshInstance.set_surface_material(0, preload("res://Materials/red_material.tres"))
+	$Area/CollisionShape.set_shape(preload("res://Shapes/move_shape_red.tres"))
+
+func _on_Area_input_event(_camera: Node, _event: InputEvent, _click_position: Vector3, _click_normal: Vector3, _shape_idx: int) -> void:
+	if _event.is_pressed():
 		get_parent().move(position_)

@@ -9,117 +9,107 @@ var King = preload("res://Scenes/King.tscn")
 var Move = preload("res://Scenes/Move.tscn")
 
 var map_ = []
-var check_map_ = []
+var figures_ = []
 var select_
 var mesh_
-var name_
 var moves_ = []
-var moveMesh_
 var turn_ = 0
 var white_king_pos_
 var black_king_pos_
 var white_check_ = 0
 var black_check_ = 0
-
-#export (PackedScene) var Pawn
-#export (PackedScene) var Figure
-
-# Declare member variables here. Examples:
-# var a: int = 2
-# var b: String = "text"
-
+var colorTurn_ = "white"
+var attackers_ : Array = []
+var blockers_ : Array = []
+var white_moves_ : Array = []
+var black_moves_ : Array = []
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	randomize()
-	
+
 	drawTexture()
-	
+
 	var map = map_
 	map.resize(8)
 	for pos in range(8):
 		map[pos] = []
 		map[pos].resize(8)
-	
-	check_map_.resize(8)
-	for pos in range(8):
-		check_map_[pos] = []
-		check_map_[pos].resize(8)
-		for pos2 in range(8):
-			check_map_[pos][pos2] = []
-			check_map_[pos][pos2].resize(2)
-	print(check_map_)
-	
+
 	for Pawns in range(8):
 		var B_pawn = Pawn.instance()
-		B_pawn.resetColor("black")
+		B_pawn.initColor("black")
 		map[6][Pawns] = B_pawn
 		add_child(B_pawn)
 		var W_pawn = Pawn.instance()
-		W_pawn.resetColor("white")
+		W_pawn.initColor("white")
 		map[1][Pawns] = W_pawn
 		add_child(W_pawn)
-	
+
 	for Else in [0,7]:
 		var B_Rook = Rook.instance()
-		B_Rook.resetColor("black")
+		B_Rook.initColor("black")
 		map[7][Else] = B_Rook
 		add_child(B_Rook)
 		var W_Rook = Rook.instance()
-		W_Rook.resetColor("white")
+		W_Rook.initColor("white")
 		map[0][Else] = W_Rook
 		add_child(W_Rook)
-		
+
 		var B_Knight = Knight.instance()
-		B_Knight.resetColor("black")
+		B_Knight.initColor("black")
 		map[7][1+Else*5/7] = B_Knight
 		add_child(B_Knight)
 		var W_Knight = Knight.instance()
-		W_Knight.resetColor("white")
+		W_Knight.initColor("white")
 		map[0][6+Else*-5/7] = W_Knight
 		add_child(W_Knight)
-		
+
 		var B_Bishop = Bishop.instance()
-		B_Bishop.resetColor("black")
+		B_Bishop.initColor("black")
 		map[7][2+Else*3/7] = B_Bishop
 		add_child(B_Bishop)
 		var W_Bishop = Bishop.instance()
-		W_Bishop.resetColor("white")
+		W_Bishop.initColor("white")
 		map[0][5+Else*-3/7] = W_Bishop
 		add_child(W_Bishop)
-		
+
 	var B_Queen = Queen.instance()
-	B_Queen.resetColor("black")
+	B_Queen.initColor("black")
 	map[7][3] = B_Queen
 	add_child(B_Queen)
 	var W_Queen = Queen.instance()
-	W_Queen.resetColor("white")
+	W_Queen.initColor("white")
 	map[0][3] = W_Queen
 	add_child(W_Queen)
-	
+
 	var B_King = King.instance()
-	B_King.resetColor("black")
+	B_King.initColor("black")
 	map[7][4] = B_King
 	add_child(B_King)
 	var W_King = King.instance()
-	W_King.resetColor("white")
+	W_King.initColor("white")
 	map[0][4] = W_King
 	add_child(W_King)
-	
+
+	setKingPos(7,4,"black")
+	setKingPos(0,4,"white")
+
 	print(map)
-	
+
 	for Load in range(8):
 		for Load2 in range(8):
 			var figure = map[Load][Load2]
 			if figure != null:
+				figures_.append(figure)
 				figure.set_translation(Vector3(Load*3-10.5,10,Load2*3-10.5))
-	
-
+				figure.setPosition(Load,Load2)
+	checkAllMoves()
 #	for PawnLoad in range(8):
 #		var pawn = Figure.instance()
 #		add_child(pawn)
 #		pawn.set_translation(Vector3(7.5,3,PawnLoad*3-10.5))
-	
+
 #	figure.position =
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func drawTexture():
@@ -143,12 +133,12 @@ func drawTexture():
 				image.set_pixel((625+i+100*n), (25+j+100*n), Color(0, 0, 0))
 	for p in range(850):
 		for q in range(25):
-			if getTurn()%2 == 0:
+			if colorTurn_ == "white":
 				image.set_pixel(p, q+825, Color(100, 100, 100))
 				image.set_pixel(q+825, p, Color(100, 100, 100))
 				image.set_pixel(p, q, Color(100, 100, 100))
 				image.set_pixel(q, p, Color(100, 100, 100))
-			if getTurn()%2 != 0:
+			if colorTurn_ == "black":
 				image.set_pixel(p, q+825, Color(0, 0, 0))
 				image.set_pixel(q+825, p, Color(0, 0, 0))
 				image.set_pixel(p, q, Color(0, 0, 0))
@@ -161,473 +151,198 @@ func drawTexture():
 	mat.uv1_offset = Vector3(0.5, 0, 0)
 	$StaticBody/desk.set_surface_material(0, mat)
 
-func getSelectPosition(select):
-	for check in range(8):
-		for check2 in range(8):
-			if map_[check][check2] == select:
-				return [check,check2]
+func getFromMap(pos1,pos2):
+	return map_[pos1][pos2]
 
-func select(select,color):
-	var colorTurn
-	if getTurn()%2 == 0:
-		colorTurn = "white"
+func checkAllMoves() -> void:
+#	nefunkcni asi k hovnu
+#	if attackers_ != []:
+#		for attacker in attackers_:
+#			attacker.checkMoves()
+	for figure in figures_:
+		if figure.getName() != "king":
+			figure.checkMoves()
+	if colorTurn_ == "black":
+		map_[black_king_pos_[0]][black_king_pos_[1]].checkMoves()
+		map_[white_king_pos_[0]][white_king_pos_[1]].checkMoves()
 	else:
-		colorTurn = "black"
-	if colorTurn == color:
-		for i in moves_:
-			i.queue_free()
-		moves_.clear()
-		
-		select_ = select
-		var pos = getSelectPosition(select_)
-		var pos1 = pos[0]
-		var pos2 = pos[1]
-		print("y=",str(pos1)," x=",str(pos2))
-		var move_side
-		var dont1 = false
-		var dont2 = false
-		var dont3 = false
-		var dont4 = false
-		var dont5 = false
-		var dont6 = false
-		var dont7 = false
-		var dont8 = false
-		var move_position_y
-		var move_position_x
-		select_.getMesh().set_surface_material(0, preload("res://Materials/selected_material.tres"))
-		if name_ == "pawn":
-			if color == "white":
-				move_side = +1
-				if pos2+move_side < 8:
-					if map_[pos1+move_side][pos2+move_side] != null:
-						var move = Move.instance()
-						move.setPosition([pos1+move_side,pos2+move_side])
-						addTakeMove(pos1+move_side,pos2+move_side,color,move)
-				if map_[pos1+move_side][pos2-move_side] != null:
-					var move = Move.instance()
-					move.setPosition([pos1+move_side,pos2-move_side])
-					addTakeMove(pos1+move_side,pos2-move_side,color,move)
-			if color == "black":
-				move_side = -1
-				if map_[pos1+move_side][pos2+move_side] != null:
-					var move = Move.instance()
-					move.setPosition([pos1+move_side,pos2+move_side])
-					addTakeMove(pos1+move_side,pos2+move_side,color,move)
-				if pos2-move_side < 8:
-					if map_[pos1+move_side][pos2-move_side] != null:
-						var move = Move.instance()
-						move.setPosition([pos1+move_side,pos2-move_side])
-						addTakeMove(pos1+move_side,pos2-move_side,color,move)
-				
-			for move_pawn in range (2):
-				if dont1 == false:
-					move_position_y = pos1+(move_pawn+1)*move_side
-					move_position_x = pos2
-					dont1 = addMoves(move_position_y,move_position_x,color)
-					if select_.isFirstMove() == false:
-						break
-		if name_ == "rook":
-			for move_rook in range (1,8):
-				if dont1 == false:
-					move_position_y = pos1-move_rook
-					move_position_x = pos2
-					dont1 = addMoves(move_position_y,move_position_x,color)
-				if dont2 == false:
-					move_position_y = pos1+move_rook
-					move_position_x = pos2
-					dont2 = addMoves(move_position_y,move_position_x,color)
-				if dont3 == false:
-					move_position_y = pos1
-					move_position_x = pos2-move_rook
-					dont3 = addMoves(move_position_y,move_position_x,color)
-				if dont4 == false:
-					move_position_y = pos1
-					move_position_x = pos2+move_rook
-					dont4 = addMoves(move_position_y,move_position_x,color)
-		if name_ == "knight":
-			for move_knight in [0,1]:
-				move_position_y = pos1+2+(move_knight*-1)
-				move_position_x = pos2+1+(move_knight*+1)
-				addMoves(move_position_y,move_position_x,color)
-
-				move_position_y = pos1+2+(move_knight*-1)
-				move_position_x = pos2-1+(move_knight*-1)
-				addMoves(move_position_y,move_position_x,color)
-
-				move_position_y = pos1-2+move_knight*+1
-				move_position_x = pos2+1+move_knight*+1
-				addMoves(move_position_y,move_position_x,color)
-
-				move_position_y = pos1-2+move_knight*+1
-				move_position_x = pos2-1+move_knight*-1
-				addMoves(move_position_y,move_position_x,color)
-		if name_ == "bishop":
-			for move_bishop in range (1,8):
-				if dont1 == false:
-					move_position_y = pos1-move_bishop
-					move_position_x = pos2+move_bishop
-					dont1 = addMoves(move_position_y,move_position_x,color)
-				if dont2 == false:
-					move_position_y = pos1+move_bishop
-					move_position_x = pos2+move_bishop
-					dont2 = addMoves(move_position_y,move_position_x,color)
-				if dont3 == false:
-					move_position_y = pos1+move_bishop
-					move_position_x = pos2-move_bishop
-					dont3 = addMoves(move_position_y,move_position_x,color)
-				if dont4 == false:
-					move_position_y = pos1-move_bishop
-					move_position_x = pos2-move_bishop
-					dont4 = addMoves(move_position_y,move_position_x,color)
-		if name_ == "queen":
-			for move_queen in range (1,8):
-				if dont1 == false:
-					move_position_y = pos1-move_queen
-					move_position_x = pos2
-					dont1 = addMoves(move_position_y,move_position_x,color)
-				if dont2 == false:
-					move_position_y = pos1+move_queen
-					move_position_x = pos2
-					dont2 = addMoves(move_position_y,move_position_x,color)
-				if dont3 == false:
-					move_position_y = pos1
-					move_position_x = pos2-move_queen
-					dont3 = addMoves(move_position_y,move_position_x,color)
-				if dont4 == false:
-					move_position_y = pos1
-					move_position_x = pos2+move_queen
-					dont4 = addMoves(move_position_y,move_position_x,color)
-				if dont5 == false:
-					move_position_y = pos1-move_queen
-					move_position_x = pos2+move_queen
-					dont5 = addMoves(move_position_y,move_position_x,color)
-				if dont6 == false:
-					move_position_y = pos1+move_queen
-					move_position_x = pos2+move_queen
-					dont6 = addMoves(move_position_y,move_position_x,color)
-				if dont7 == false:
-					move_position_y = pos1+move_queen
-					move_position_x = pos2-move_queen
-					dont7 = addMoves(move_position_y,move_position_x,color)
-				if dont8 == false:
-					move_position_y = pos1-move_queen
-					move_position_x = pos2-move_queen
-					dont8 = addMoves(move_position_y,move_position_x,color)
-		if name_ == "king":
-			var index_color
-			if color == "white":
-				index_color = 1
-			else:
-				index_color = 0
-			
-			move_position_y = pos1-1
-			move_position_x = pos2
-			if check_map_[move_position_y][move_position_x][index_color] == null: 
-				addMoves(move_position_y,move_position_x,color)
-			
-			move_position_y = pos1+1
-			move_position_x = pos2
-			if check_map_[move_position_y][move_position_x][index_color] == null: 
-				addMoves(move_position_y,move_position_x,color)
-			
-			move_position_y = pos1
-			move_position_x = pos2-1
-			if check_map_[move_position_y][move_position_x][index_color] == null: 
-				addMoves(move_position_y,move_position_x,color)
-			
-			move_position_y = pos1
-			move_position_x = pos2+1
-			if check_map_[move_position_y][move_position_x][index_color] == null: 
-				addMoves(move_position_y,move_position_x,color)
-			
-			move_position_y = pos1-1
-			move_position_x = pos2+1
-			if check_map_[move_position_y][move_position_x][index_color] == null: 
-				addMoves(move_position_y,move_position_x,color)
-			
-			move_position_y = pos1+1
-			move_position_x = pos2+1
-			if check_map_[move_position_y][move_position_x][index_color] == null: 
-				addMoves(move_position_y,move_position_x,color)
-			
-			move_position_y = pos1+1
-			move_position_x = pos2-1
-			if check_map_[move_position_y][move_position_x][index_color] == null: 
-				addMoves(move_position_y,move_position_x,color)
-			
-			move_position_y = pos1-1
-			move_position_x = pos2-1
-			if check_map_[move_position_y][move_position_x][index_color] == null: 
-				addMoves(move_position_y,move_position_x,color)
-
-func addMoves(move_position_y,move_position_x,color):
-	var move = Move.instance()
-	var dont
-	move.setPosition([move_position_y,move_position_x])
-	if (move_position_x < 8 && move_position_x >= 0) && (move_position_y < 8 && move_position_y > -1):
-		if map_[move_position_y][move_position_x] == null:
-			add_child(move)
-			moves_.append(move)
-			move.set_translation(Vector3((move_position_y)*3-10.5,0.7,move_position_x*3-10.5))
-			dont = false
-		else:
-			dont = true
-			if name_ != "pawn":
-				addTakeMove(move_position_y,move_position_x,color,move)
-#			if name_ == "pawn":
-#				don
-	return dont
-	
-func addTakeMove(move_position_y,move_position_x,color,move):
-	if map_[move_position_y][move_position_x].getColor() != color: 
-	#			vyhozeni
-				add_child(move)
-				moves_.append(move)
-				moveMesh_.set_surface_material(0, preload("res://Materials/red_material.tres"))
-				move.set_translation(Vector3((move_position_y)*3-10.5,0.7,move_position_x*3-10.5))
-func getMoveMesh(moveMesh):
-	moveMesh_ = moveMesh
-
-func move(move_position):
-#	var map_move_position = map_[move_position[0]][move_position[1]]
+		map_[white_king_pos_[0]][white_king_pos_[1]].checkMoves()
+		map_[black_king_pos_[0]][black_king_pos_[1]].checkMoves()
+func select(select,color):
+	if colorTurn_ != color:
+		return
+	if !select in figures_:
+		return
 	for i in moves_:
 		i.queue_free()
 	moves_.clear()
-	if map_[move_position[0]][move_position[1]] != null:
-		map_[move_position[0]][move_position[1]].get_child(0).set_mode(RigidBody.MODE_RIGID)
-		select_.moveAnimation(move_position)
+
+	select_ = select
+
+	select.selectColor()
+	var moves = select.getMoves()
+	addMoves(moves)
+
+
+func addMoves(moves):
+	for i in moves.size():
+		var move = Move.instance()
+		move.setPosition(moves[i])
+		add_child(move)
+		moves_.append(move)
+		move.set_translation(Vector3(moves[i][0]*3-10.5,0.7,moves[i][1]*3-10.5))
+		if map_[moves[i][0]][moves[i][1]] != null: 
+			move.setMoveRed()
 		
+#	var move = Move.instance()
+#	var dont
+#	move.setPosition([move_pos1,move_pos2])
+#	if (move_pos2 < 8 && move_pos2 >= 0) && (move_pos1 < 8 && move_pos1 > -1):
+#		if map_[move_pos1][move_pos2] == null:
+#			add_child(move)
+#			moves_.append(move)
+#			move.set_translation(Vector3(move_pos1*3-10.5,0.7,move_pos2*3-10.5))
+#			dont = false
+#		else:
+#			dont = true
+#			if name_ != "pawn":
+#				addTakeMove(move_pos1,move_pos2,color)
+##			if name_ == "pawn":
+##				don
+#	return dont
+
+#func addTakeMove(move_pos1,move_pos2,color) -> void:
+#	if map_[move_pos1][move_pos2].getColor() != color: 
+##			vyhozeni
+#		var move = Move.instance()
+#		move.setPosition([move_pos1,move_pos2])
+#		add_child(move)
+#		moves_.append(move)
+#		moveMesh_.set_surface_material(0, preload("res://Materials/red_material.tres"))
+#		move.set_translation(Vector3((move_pos1)*3-10.5,0.7,move_pos2*3-10.5))
+
+func move(move_pos) -> void:
+	var move_pos1 = move_pos[0]
+	var move_pos2 = move_pos[1]
+	
+	for i in moves_:
+		i.queue_free()
+	moves_.clear()
+	
+	if map_[move_pos1][move_pos2] != null:
+		map_[move_pos1][move_pos2].get_child(0).set_mode(RigidBody.MODE_RIGID)
 		select_.addKillCount()
-		freeFigure(map_[move_position[0]][move_position[1]])
-	else:
-		select_.moveAnimation(move_position)
-	var select_pos = getSelectPosition(select_)
+		figures_.erase(map_[move_pos1][move_pos2])
+		freeFigure(map_[move_pos1][move_pos2])
+		
+	select_.moveAnimation(move_pos)
+	var select_pos = select_.getPosition()
 	map_[select_pos[0]][select_pos[1]] = null
-	map_[move_position[0]][move_position[1]] = select_
+	map_[move_pos1][move_pos2] = select_
 	select_.firstMoveDone()
+	select_.setPosition(move_pos1,move_pos2)
+	if select_.getName() == "king":
+		setKingPos(move_pos1,move_pos2,select_.getColor())
+#	další kolo
+	attackers_ = []
+	white_moves_ = []
+	black_moves_ = []
+	checkAllMoves()
+	checkAllMoves()
+	blockers_ = []
 	nextTurn()
 	drawTexture()
-	
-	resetCheckMap()
-	print(check_map_)
-	
-	checkForCheck()
-	
-func setKingPos(pos1,pos2,color):
+
+func setKingPos(pos1,pos2,color) -> void:
 	if color == "white":
 		white_king_pos_ = [pos1,pos2]
 	else:
 		black_king_pos_ = [pos1,pos2]
+
+func getKingPos(color) -> Array:
+	if color == "white":
+		return white_king_pos_
+	else:
+		return black_king_pos_
+		
+func appendAllMoves(moves,color) -> void:
+	if color == "white":
+		for move in moves:
+			white_moves_.append(move)
+	else:
+		for move in moves:
+			black_moves_.append(move)
+		
+func getAllMoves(color) -> Array:
+	if color == "white":
+		return white_moves_
+	else:
+		return black_moves_
+		
+func setCheck(color,attacking_figure) -> void:
+	print(color," check by ",attacking_figure.getColor()," ",attacking_figure.getName(),"!")
+	attackers_.append(attacking_figure)
 	
-func checkForCheck():
-	if check_map_[white_king_pos_[0]][white_king_pos_[1]][1] == "black":
-		white_check_ += 1
-		print("White check")
-		if white_check_ == 2:
-			print("White check mate")
-	else:
-		white_check_ = 0
-		
-	if check_map_[black_king_pos_[0]][black_king_pos_[1]][0] == "white":
-		black_check_ += 1
-		print("Black check")
-		if black_check_ == 2:
-			print("Black check mate")
-	else:
-		black_check_ = 0
-		
-func ableToTake(pos1,pos2,color):
-	var dont
-	if (pos2 < 8 && pos2 >= 0) && (pos1 < 8 && pos1 > -1):
-		var index_color
-		if color == "white":
-			index_color = 0
-		else:
-			index_color = 1
-		if map_[pos1][pos2] == null:
-			dont = false
-			check_map_[pos1][pos2][index_color] = color
-		else:
-			dont = true
-			if map_[pos1][pos2].getColor() != color:
-				
-				check_map_[pos1][pos2][index_color] = color
-	return dont
+func getCheck() -> Array:
+	return attackers_
+	
+func setBlocker(blocker) -> void:
+	blockers_.append(blocker)
 
-func clearCheckMap():
-	for i in (8):
-		for l in (8):
-			for j in (2):
-				check_map_[i][l][j] = null
+func checkIfBlocker(blocker) -> bool:
+	if blocker in blockers_:
+		return true
+	return false
+#	if check_map_[white_king_pos_[0]][white_king_pos_[1]][1] == "black":
+#		white_check_ += 1
+#		print("White check")
+#		if white_check_ == 2:
+#			print("White check mate")
+#	else:
+#		white_check_ = 0
+#
+#	if check_map_[black_king_pos_[0]][black_king_pos_[1]][0] == "white":
+#		black_check_ += 1
+#		print("Black check")
+#		if black_check_ == 2:
+#			print("Black check mate")
+#	else:
+#		black_check_ = 0
 
-func resetCheckMap():
-	clearCheckMap()
-	for check in range(8):
-		for check2 in range(8):
-			if map_[check][check2] != null:
-				var figure = map_[check][check2]
-				var pos = getSelectPosition(figure)
-				var pos1 = pos[0]
-				var pos2 = pos[1]
-				var figure_color = figure.getColor()
-				var figure_name = figure.getName()
-				var move_side
-				var dont1 = false
-				var dont2 = false
-				var dont3 = false
-				var dont4 = false
-				var dont5 = false
-				var dont6 = false
-				var dont7 = false
-				var dont8 = false
-				var move_position_y
-				var move_position_x
-				if figure_name == "pawn":
-					if figure_color == "white":
-						move_side = +1
-						ableToTake(pos1+move_side,pos2+move_side,figure_color)
-						ableToTake(pos1+move_side,pos2+move_side,figure_color)
-					if figure_color == "black":
-						move_side = -1
-						ableToTake(pos1+move_side,pos2+move_side,figure_color)
-						ableToTake(pos1+move_side,pos2+move_side,figure_color)
-				if figure_name == "rook":
-					for move_rook in range (1,8):
-						if dont1 == false:
-							move_position_y = pos1-move_rook
-							move_position_x = pos2
-							dont1 = ableToTake(move_position_y,move_position_x,figure_color)
-						if dont2 == false:
-							move_position_y = pos1+move_rook
-							move_position_x = pos2
-							dont2 = ableToTake(move_position_y,move_position_x,figure_color)
-						if dont3 == false:
-							move_position_y = pos1
-							move_position_x = pos2-move_rook
-							dont3 = ableToTake(move_position_y,move_position_x,figure_color)
-						if dont4 == false:
-							move_position_y = pos1
-							move_position_x = pos2+move_rook
-							dont4 = ableToTake(move_position_y,move_position_x,figure_color)
-				if figure_name == "knight":
-					for move_knight in [0,1]:
-						move_position_y = pos1+2+(move_knight*-1)
-						move_position_x = pos2+1+(move_knight*+1)
-						ableToTake(move_position_y,move_position_x,figure_color)
+#func ableToTake(pos1,pos2,color):
+#	var dont
+#	if (pos2 < 8 && pos2 >= 0) && (pos1 < 8 && pos1 > -1):
+#		var index_color
+#		if color == "white":
+#			index_color = 0
+#		else:
+#			index_color = 1
+#		if map_[pos1][pos2] == null:
+#			dont = false
+#			check_map_[pos1][pos2][index_color] = color
+#		else:
+#			dont = true
+#			if map_[pos1][pos2].getColor() != color:
+#
+#				check_map_[pos1][pos2][index_color] = color
+#	return dont
 
-						move_position_y = pos1+2+(move_knight*-1)
-						move_position_x = pos2-1+(move_knight*-1)
-						ableToTake(move_position_y,move_position_x,figure_color)
-
-						move_position_y = pos1-2+move_knight*+1
-						move_position_x = pos2+1+move_knight*+1
-						ableToTake(move_position_y,move_position_x,figure_color)
-
-						move_position_y = pos1-2+move_knight*+1
-						move_position_x = pos2-1+move_knight*-1
-						ableToTake(move_position_y,move_position_x,figure_color)
-				if figure_name == "bishop":
-					for move_bishop in range (1,8):
-						if dont1 == false:
-							move_position_y = pos1-move_bishop
-							move_position_x = pos2+move_bishop
-							dont1 = ableToTake(move_position_y,move_position_x,figure_color)
-						if dont2 == false:
-							move_position_y = pos1+move_bishop
-							move_position_x = pos2+move_bishop
-							dont2 = ableToTake(move_position_y,move_position_x,figure_color)
-						if dont3 == false:
-							move_position_y = pos1+move_bishop
-							move_position_x = pos2-move_bishop
-							dont3 = ableToTake(move_position_y,move_position_x,figure_color)
-						if dont4 == false:
-							move_position_y = pos1-move_bishop
-							move_position_x = pos2-move_bishop
-							dont4 = ableToTake(move_position_y,move_position_x,figure_color)
-				if figure_name == "queen":
-					for move_queen in range (1,8):
-						if dont1 == false:
-							move_position_y = pos1-move_queen
-							move_position_x = pos2
-							dont1 = ableToTake(move_position_y,move_position_x,figure_color)
-						if dont2 == false:
-							move_position_y = pos1+move_queen
-							move_position_x = pos2
-							dont2 = ableToTake(move_position_y,move_position_x,figure_color)
-						if dont3 == false:
-							move_position_y = pos1
-							move_position_x = pos2-move_queen
-							dont3 = ableToTake(move_position_y,move_position_x,figure_color)
-						if dont4 == false:
-							move_position_y = pos1
-							move_position_x = pos2+move_queen
-							dont4 = ableToTake(move_position_y,move_position_x,figure_color)
-						if dont5 == false:
-							move_position_y = pos1-move_queen
-							move_position_x = pos2+move_queen
-							dont5 = ableToTake(move_position_y,move_position_x,figure_color)
-						if dont6 == false:
-							move_position_y = pos1+move_queen
-							move_position_x = pos2+move_queen
-							dont6 = ableToTake(move_position_y,move_position_x,figure_color)
-						if dont7 == false:
-							move_position_y = pos1+move_queen
-							move_position_x = pos2-move_queen
-							dont7 = ableToTake(move_position_y,move_position_x,figure_color)
-						if dont8 == false:
-							move_position_y = pos1-move_queen
-							move_position_x = pos2-move_queen
-							dont8 = ableToTake(move_position_y,move_position_x,figure_color)
-				if figure_name == "king":
-					setKingPos(pos1,pos2,figure_color)
-					
-					move_position_y = pos1-1
-					move_position_x = pos2
-					ableToTake(move_position_y,move_position_x,figure_color)
-		
-					move_position_y = pos1+1
-					move_position_x = pos2
-					ableToTake(move_position_y,move_position_x,figure_color)
-		
-					move_position_y = pos1
-					move_position_x = pos2-1
-					ableToTake(move_position_y,move_position_x,figure_color)
-		
-					move_position_y = pos1
-					move_position_x = pos2+1
-					ableToTake(move_position_y,move_position_x,figure_color)
-		
-					move_position_y = pos1-1
-					move_position_x = pos2+1
-					ableToTake(move_position_y,move_position_x,figure_color)
-		
-					move_position_y = pos1+1
-					move_position_x = pos2+1
-					ableToTake(move_position_y,move_position_x,figure_color)
-		
-					move_position_y = pos1+1
-					move_position_x = pos2-1
-					ableToTake(move_position_y,move_position_x,figure_color)
-		
-					move_position_y = pos1-1
-					move_position_x = pos2-1
-					ableToTake(move_position_y,move_position_x,figure_color)
-		
 func nextTurn():
 	turn_ += 1
-func getTurn():
-	return turn_
+	if turn_%2 == 0:
+		colorTurn_ = "white"
+	else:
+		colorTurn_ = "black"
+		
 func freeFigure(figure):
-	yield(get_tree().create_timer(2.5),"timeout")
+	yield(get_tree().create_timer(3.3),"timeout")
 	figure.queue_free()
-func who(name):
-	name_ = name
-
+	
 func _input(event):
 	if event is InputEventMouseButton:
 		if event.is_pressed():
 			if select_:
-				select_.resetColor(select_.getColor())
+				select_.resetColor()
 				for i in moves_:
 					i.queue_free()
 				moves_.clear()

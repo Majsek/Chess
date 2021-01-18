@@ -1,0 +1,6 @@
+[gd_resource type="CapsuleShape" format=2]
+
+[resource]
+margin = 1.0
+radius = 1.27487
+height = 0.002

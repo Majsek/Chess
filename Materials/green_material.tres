@@ -1,7 +1,8 @@
 [gd_resource type="SpatialMaterial" format=2]
 
 [resource]
-albedo_color = Color( 0.65098, 1, 0.305882, 0.784314 )
-roughness = 0.63
+albedo_color = Color( 0.196078, 0.623529, 0.882353, 1 )
+metallic = 0.3
+roughness = 0.53
 proximity_fade_enable = true
-proximity_fade_distance = 1.0
+proximity_fade_distance = 0.5

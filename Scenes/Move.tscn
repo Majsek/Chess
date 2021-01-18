@@ -2,12 +2,9 @@
 
 [ext_resource path="res://Materials/green_material.tres" type="Material" id=1]
 [ext_resource path="res://Scripts/Move.gd" type="Script" id=2]
+[ext_resource path="res://Shapes/move_shape_green.tres" type="Shape" id=3]
 
 [sub_resource type="CapsuleMesh" id=1]
-
-[sub_resource type="CapsuleShape" id=2]
-margin = 0.001
-height = 0.01
 
 [node name="Move" type="Spatial"]
 script = ExtResource( 2 )
@@ -22,6 +19,6 @@ collision_layer = 2
 collision_mask = 0
 
 [node name="CollisionShape" type="CollisionShape" parent="Area"]
-transform = Transform( 1.5, 0, 0, 0, 3, 0, 0, 0, 1.5, 0, 0.1, 0 )
-shape = SubResource( 2 )
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0 )
+shape = ExtResource( 3 )
 [connection signal="input_event" from="Area" to="." method="_on_Area_input_event"]

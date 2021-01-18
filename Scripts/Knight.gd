@@ -1,21 +1,29 @@
 extends "Figure.gd"
 
-# Declare member variables here. Examples:
-# var a: int = 2
-# var b: String = "text"
-
-func getName():
-	return "knight"
-
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
-	
+	name_ = "knight"
 
-func _on_RigidBody_input_event(camera: Node, event: InputEvent, click_position: Vector3, click_normal: Vector3, shape_idx: int) -> void:
-	if event.is_pressed():
-		get_parent().who(getName())
-		._on_RigidBody_input_event(camera, event, click_position, click_normal, shape_idx)	
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta: float) -> void:
-#	pass
+func checkMoves():
+	moves_ = []
+	attack_moves_ = []
+	var pos1 = position_[0]
+	var pos2 = position_[1]
+	var move_pos1 : int
+	var move_pos2 : int
+	for move_knight in [0,1]:
+		move_pos1 = pos1+2+(move_knight*-1)
+		move_pos2 = pos2+1+(move_knight*+1)
+		ableToMove(move_pos1,move_pos2,9)
+
+		move_pos1 = pos1+2+(move_knight*-1)
+		move_pos2 = pos2-1+(move_knight*-1)
+		ableToMove(move_pos1,move_pos2,7)
+
+		move_pos1 = pos1-2+move_knight*+1
+		move_pos2 = pos2+1+move_knight*+1
+		ableToMove(move_pos1,move_pos2,3)
+
+		move_pos1 = pos1-2+move_knight*+1
+		move_pos2 = pos2-1+move_knight*-1
+		ableToMove(move_pos1,move_pos2,1)
+	checkForCheck()
