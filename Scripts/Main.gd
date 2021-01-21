@@ -248,6 +248,8 @@ func move(move_pos) -> void:
 	black_moves_ = []
 	checkAllMoves()
 	checkAllMoves()
+	for figure in figures_:
+		figure.resetBlockers()
 	blockers_ = []
 	nextTurn()
 	drawTexture()

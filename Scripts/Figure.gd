@@ -166,6 +166,8 @@ func ableToMove(move_pos1,move_pos2, direction, dont : Array = [false,false]) ->
 #			attack_moves_.append(move)
 #			if check_blocking_ == false:
 				attack_moves_.append(move)
+			else:
+				attack_moves_.append(move)
 
 		else:
 			if someone.getColor() != color_:
@@ -179,13 +181,18 @@ func ableToMove(move_pos1,move_pos2, direction, dont : Array = [false,false]) ->
 				if someone.getName() != "king":
 					blockers_[direction] = someone
 				else:
-					dont[1] = true
+#					dont[1] = true
 #					check_blocking_ = false
 					if blockers_[direction] != null:
 						get_parent().setAttackingBlocker(self)
 						get_parent().setBlocker(blockers_[direction])
 						blockers_[direction].setAllowedDirection(direction)
+						dont[1] = true
+					else:
+						dont[0] = false
+
 			else:
+				attack_moves_.append(move)
 				dont[1] = true
 #				check_blocking_ = false
 #			if check_blocking_ == false:
@@ -198,6 +205,9 @@ func setAllowedDirection(direction) -> void:
 	
 func reverseDirection(direction : int) -> int:
 	return 10 - direction
+	
+func resetBlockers() -> void:
+	blockers_ = [null,null,null,null,null,null,null,null,null,null]
 	
 #func ableToMove(move_pos1,move_pos2) -> bool:
 #	var dont = true
