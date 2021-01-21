@@ -103,57 +103,58 @@ func ableToMove(move_pos1,move_pos2, direction, dont : Array = [false,false]) ->
 		var attackers = get_parent().getCheck()
 		var dont3 : bool = false
 		if attackers != []:
-			if attackers[0].getColor() != color_:
-				var attacker_pos = attackers[0].getPosition()
-				var king_pos = get_parent().getKingPos(color_)
-				var attacker_moves = attackers[0].getMoves()
-				attacker_moves.append(attackers[0].getPosition())
-				if !move in attacker_moves:
-					dont3 = true
-				
-				if dont3 == false:
-					var smaller = king_pos
-					var bigger = attacker_pos
-					if attacker_pos[0] == king_pos[0]:
-						if move_pos1 != king_pos[0]:
-							dont3 = true
-						else: 
-							if attacker_pos[1] < king_pos[1]:
-								smaller = attacker_pos
-								bigger = king_pos
-							if move_pos2 < smaller[1]:
+			for attacker in attackers:
+				if attacker.getColor() != color_:
+					var attacker_pos = attacker.getPosition()
+					var king_pos = get_parent().getKingPos(color_)
+					var attacker_moves = attacker.getMoves()
+					attacker_moves.append(attacker.getPosition())
+					if !move in attacker_moves:
+						dont3 = true
+					
+					if dont3 == false:
+						var smaller = king_pos
+						var bigger = attacker_pos
+						if attacker_pos[0] == king_pos[0]:
+							if move_pos1 != king_pos[0]:
 								dont3 = true
-							if move_pos2 > bigger[1]:
-								dont3 = true
-					else:
-						if attacker_pos[1] == king_pos[1]:
-							if move_pos2 != king_pos[1]:
-								dont3 = true
+							else: 
+								if attacker_pos[1] < king_pos[1]:
+									smaller = attacker_pos
+									bigger = king_pos
+								if move_pos2 < smaller[1]:
+									dont3 = true
+								if move_pos2 > bigger[1]:
+									dont3 = true
+						else:
+							if attacker_pos[1] == king_pos[1]:
+								if move_pos2 != king_pos[1]:
+									dont3 = true
+								else:
+									if attacker_pos[0] < king_pos[0]:
+										smaller = attacker_pos
+										bigger = king_pos
+									if move_pos1 < smaller[0]:
+										dont3 = true
+									if move_pos1 > bigger[0]:
+										dont3 = true
 							else:
+								var minus = +1
 								if attacker_pos[0] < king_pos[0]:
 									smaller = attacker_pos
 									bigger = king_pos
-								if move_pos1 < smaller[0]:
-									dont3 = true
-								if move_pos1 > bigger[0]:
-									dont3 = true
-						else:
-							var minus = +1
-							if attacker_pos[0] < king_pos[0]:
-								smaller = attacker_pos
-								bigger = king_pos
-							if smaller[1] > bigger[1]:
-									minus = -1
-#							if attacker_pos[1] < king_pos[1]:
-#								smaller = attacker_pos
-#								bigger = king_pos
-							var difference = bigger[0] - smaller[0]
-							for i in range (difference):
-								if move_pos1 == (smaller[0] + i) && move_pos2 == (smaller[1] + i*minus):
-									dont3 = false
-									break
-								else: 
-									dont3 = true
+								if smaller[1] > bigger[1]:
+										minus = -1
+	#							if attacker_pos[1] < king_pos[1]:
+	#								smaller = attacker_pos
+	#								bigger = king_pos
+								var difference = bigger[0] - smaller[0]
+								for i in range (difference):
+									if move_pos1 == (smaller[0] + i) && move_pos2 == (smaller[1] + i*minus):
+										dont3 = false
+										break
+									else: 
+										dont3 = true
 								
 		var someone = get_parent().getFromMap(move_pos1,move_pos2)
 		if someone == null:
@@ -174,13 +175,16 @@ func ableToMove(move_pos1,move_pos2, direction, dont : Array = [false,false]) ->
 					dont[0] = true
 #					addTakeMove
 #				check_blocking_ = true
+				
 				if someone.getName() != "king":
 					blockers_[direction] = someone
 				else:
 					dont[1] = true
 #					check_blocking_ = false
-					get_parent().setBlocker(blockers_[direction])
-					blockers_[direction].setAllowedDirection(direction)
+					if blockers_[direction] != null:
+						get_parent().setAttackingBlocker(self)
+						get_parent().setBlocker(blockers_[direction])
+						blockers_[direction].setAllowedDirection(direction)
 			else:
 				dont[1] = true
 #				check_blocking_ = false

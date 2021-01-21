@@ -5,6 +5,10 @@ func _ready() -> void:
 	
 func ableToMovePawn(move_pos1,move_pos2) -> bool:
 	var dont = true
+	if get_parent().checkIfBlocker(self):
+		print(color_ + name_ + "is blocking the King!")
+		if get_parent().getAttackingBlocker().getPosition() != [move_pos1,move_pos2]:
+			return dont
 	if (move_pos2 < 8 && move_pos2 >= 0) && (move_pos1 < 8 && move_pos1 >= 0):
 		var move = [move_pos1,move_pos2]
 		var attackers = get_parent().getCheck()

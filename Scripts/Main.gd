@@ -16,11 +16,10 @@ var moves_ = []
 var turn_ = 0
 var white_king_pos_
 var black_king_pos_
-var white_check_ = 0
-var black_check_ = 0
 var colorTurn_ = "white"
 var attackers_ : Array = []
 var blockers_ : Array = []
+var attacking_blocker_ : Node
 var white_moves_ : Array = []
 var black_moves_ : Array = []
 
@@ -286,13 +285,19 @@ func setCheck(color,attacking_figure) -> void:
 func getCheck() -> Array:
 	return attackers_
 	
-func setBlocker(blocker) -> void:
+func setBlocker(blocker : Node) -> void:
 	blockers_.append(blocker)
 
 func checkIfBlocker(blocker) -> bool:
 	if blocker in blockers_:
 		return true
 	return false
+	
+func setAttackingBlocker(attacking_blocker : Node) -> void:
+	attacking_blocker_ = attacking_blocker
+	
+func getAttackingBlocker() -> Node:
+	return attacking_blocker_
 #	if check_map_[white_king_pos_[0]][white_king_pos_[1]][1] == "black":
 #		white_check_ += 1
 #		print("White check")
