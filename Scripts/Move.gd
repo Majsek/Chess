@@ -19,7 +19,6 @@ func setMeshCastling() -> void:
 
 func _on_Area_input_event(_camera: Node, _event: InputEvent, _click_position: Vector3, _click_normal: Vector3, _shape_idx: int) -> void:
 	if _event.is_pressed():
-		if castling_move_ == false:
-			get_parent().move(position_)
-		else:
+		if castling_move_ == true:
 			get_parent().castlingMove(position_)
+		get_parent().move(position_)

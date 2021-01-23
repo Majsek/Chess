@@ -20,6 +20,7 @@ var colorTurn_ = "white"
 var attackers_ : Array = []
 var blockers_ : Array = []
 var attacking_blocker_ : Node
+var castling_move_ : Node
 var white_moves_ : Array = []
 var black_moves_ : Array = []
 
@@ -208,6 +209,7 @@ func addCastlingMove(y_pos,x_pos):
 	castling_move.setAsCastlingMove()
 	castling_move.setMeshCastling()
 	add_child(castling_move)
+	castling_move_ = castling_move
 	castling_move.set_translation(Vector3(y_pos*3-10.5,0.7,x_pos*3-10.5))
 		
 #	var move = Move.instance()
@@ -270,6 +272,42 @@ func move(move_pos) -> void:
 	blockers_ = []
 	nextTurn()
 	drawTexture()
+
+func castlingMove(position):
+#	rook's
+	var old_y
+	var old_x
+	var new_y
+	var new_x
+	if position[0] == 0:
+		old_y = 0
+		if position[1] == 6:
+			old_x = 7
+			new_y = 0
+			new_x = 5
+		else:
+			old_x = 0
+			new_y = 0
+			new_x = 3
+	else:
+		if position[0] == 7:
+			old_y = 7
+			if position[1] == 6:
+				old_x = 7
+				new_y = 7
+				new_x = 5
+			else:
+				old_x = 0
+				new_y = 7
+				new_x = 3
+	map_[old_y][old_x].moveAnimation([new_y,new_x])
+	map_[old_y][old_x].setPosition(new_y,new_x)
+	map_[new_y][new_x] = map_[old_y][old_x]
+	map_[old_y][old_x] = null
+	castling_move_.queue_free()
+	
+	
+
 
 func setKingPos(pos1,pos2,color) -> void:
 	if color == "white":
