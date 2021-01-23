@@ -65,4 +65,12 @@ func checkMoves():
 	move_pos2 = pos2-1
 	ableToMoveKing(move_pos1,move_pos2)
 	
+#	castlingAvailable = get_parent().castlingAvailable(color_)
+#	if castlingAvailable[0] == true:
+#		get_parent().addCastlingMove([position_[0],6])
+##		moves_.append([position_[0],6])
+#	if castlingAvailable[1] == true:
+#		get_parent().addCastlingMove([position_[0],2])
+##		moves_.append([position_[0],2])
+	
 	checkForCheck()

@@ -11,7 +11,6 @@ var name_ : String
 var all_moves_ : Array = []
 var attack_moves_ : Array = []
 var blockers_ : Array = [null,null,null,null,null,null,null,null,null,null]
-#var check_blocking_ : bool = false
 var allowedDirection_ : int = 0
 onready var parent_ = get_parent()
 onready var animation_player_ = AnimationPlayer.new()
@@ -159,15 +158,13 @@ func ableToMove(move_pos1,move_pos2, direction, dont : Array = [false,false]) ->
 		var someone = get_parent().getFromMap(move_pos1,move_pos2)
 		if someone == null:
 			if dont[0] == false:
-	#			addMove
 				if dont3 == false:
 					moves_.append(move)
 			
 #			attack_moves_.append(move)
-#			if check_blocking_ == false:
 				attack_moves_.append(move)
-			else:
-				attack_moves_.append(move)
+#			else:
+#				attack_moves_.append(move)
 
 		else:
 			if someone.getColor() != color_:
@@ -175,14 +172,11 @@ func ableToMove(move_pos1,move_pos2, direction, dont : Array = [false,false]) ->
 					if dont3 == false:
 						moves_.append(move)
 					dont[0] = true
-#					addTakeMove
-#				check_blocking_ = true
 				
 				if someone.getName() != "king":
 					blockers_[direction] = someone
 				else:
 #					dont[1] = true
-#					check_blocking_ = false
 					if blockers_[direction] != null:
 						get_parent().setAttackingBlocker(self)
 						get_parent().setBlocker(blockers_[direction])

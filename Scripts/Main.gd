@@ -167,6 +167,7 @@ func checkAllMoves() -> void:
 	else:
 		map_[white_king_pos_[0]][white_king_pos_[1]].checkMoves()
 		map_[black_king_pos_[0]][black_king_pos_[1]].checkMoves()
+		
 func select(select,color):
 	if colorTurn_ != color:
 		return
@@ -182,6 +183,14 @@ func select(select,color):
 	var moves = select.getMoves()
 	addMoves(moves)
 
+	var castlingAvailable = castlingAvailable(color)
+	if castlingAvailable[0] == true:
+		addCastlingMove(select.getPosition()[0],6)
+#		moves_.append([position_[0],6])
+	if castlingAvailable[1] == true:
+		addCastlingMove(select.getPosition()[0],2)
+#		moves_.append([position_[0],2])
+
 
 func addMoves(moves):
 	for i in moves.size():
@@ -192,6 +201,14 @@ func addMoves(moves):
 		move.set_translation(Vector3(moves[i][0]*3-10.5,0.7,moves[i][1]*3-10.5))
 		if map_[moves[i][0]][moves[i][1]] != null: 
 			move.setMoveRed()
+			
+func addCastlingMove(y_pos,x_pos):
+	var castling_move = Move.instance()
+	castling_move.setPosition([y_pos,x_pos])
+	castling_move.setAsCastlingMove()
+	castling_move.setMeshCastling()
+	add_child(castling_move)
+	castling_move.set_translation(Vector3(y_pos*3-10.5,0.7,x_pos*3-10.5))
 		
 #	var move = Move.instance()
 #	var dont
@@ -300,6 +317,21 @@ func setAttackingBlocker(attacking_blocker : Node) -> void:
 	
 func getAttackingBlocker() -> Node:
 	return attacking_blocker_
+	
+func castlingAvailable(color) -> Array:
+	var short = false
+	var long = false
+	var y_pos = 0
+	if color == "black":
+		y_pos = 7
+	if map_[y_pos][4] != null && map_[y_pos][4].isFirstMove():
+		if map_[y_pos][7] != null && map_[y_pos][7].isFirstMove():
+			if map_[y_pos][6] == null && map_[y_pos][5] == null:
+				short = true
+		if map_[y_pos][0] != null && map_[y_pos][0].isFirstMove():
+			if map_[y_pos][1] == null && map_[y_pos][2] == null && map_[y_pos][3] == null:
+				long = true
+	return [short,long]
 #	if check_map_[white_king_pos_[0]][white_king_pos_[1]][1] == "black":
 #		white_check_ += 1
 #		print("White check")
