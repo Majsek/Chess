@@ -177,6 +177,8 @@ func select(select,color):
 	for i in moves_:
 		i.queue_free()
 	moves_.clear()
+	if castling_move_ != null:
+		castling_move_.queue_free()
 
 	select_ = select
 
@@ -185,12 +187,11 @@ func select(select,color):
 	addMoves(moves)
 
 	var castlingAvailable = castlingAvailable(color)
-	if castlingAvailable[0] == true:
-		addCastlingMove(select.getPosition()[0],6)
-#		moves_.append([position_[0],6])
-	if castlingAvailable[1] == true:
-		addCastlingMove(select.getPosition()[0],2)
-#		moves_.append([position_[0],2])
+	if select.getName() == "king":
+		if castlingAvailable[0] == true:
+			addCastlingMove(select.getPosition()[0],6)
+		if castlingAvailable[1] == true:
+			addCastlingMove(select.getPosition()[0],2)
 
 
 func addMoves(moves):
@@ -211,33 +212,6 @@ func addCastlingMove(y_pos,x_pos):
 	add_child(castling_move)
 	castling_move_ = castling_move
 	castling_move.set_translation(Vector3(y_pos*3-10.5,0.7,x_pos*3-10.5))
-		
-#	var move = Move.instance()
-#	var dont
-#	move.setPosition([move_pos1,move_pos2])
-#	if (move_pos2 < 8 && move_pos2 >= 0) && (move_pos1 < 8 && move_pos1 > -1):
-#		if map_[move_pos1][move_pos2] == null:
-#			add_child(move)
-#			moves_.append(move)
-#			move.set_translation(Vector3(move_pos1*3-10.5,0.7,move_pos2*3-10.5))
-#			dont = false
-#		else:
-#			dont = true
-#			if name_ != "pawn":
-#				addTakeMove(move_pos1,move_pos2,color)
-##			if name_ == "pawn":
-##				don
-#	return dont
-
-#func addTakeMove(move_pos1,move_pos2,color) -> void:
-#	if map_[move_pos1][move_pos2].getColor() != color: 
-##			vyhozeni
-#		var move = Move.instance()
-#		move.setPosition([move_pos1,move_pos2])
-#		add_child(move)
-#		moves_.append(move)
-#		moveMesh_.set_surface_material(0, preload("res://Materials/red_material.tres"))
-#		move.set_translation(Vector3((move_pos1)*3-10.5,0.7,move_pos2*3-10.5))
 
 func move(move_pos) -> void:
 	var move_pos1 = move_pos[0]
@@ -274,7 +248,7 @@ func move(move_pos) -> void:
 	drawTexture()
 
 func castlingMove(position):
-#	rook's
+#	rook's positions
 	var old_y
 	var old_x
 	var new_y
@@ -423,6 +397,8 @@ func _input(event):
 				for i in moves_:
 					i.queue_free()
 				moves_.clear()
+				if castling_move_ != null:
+					castling_move_.queue_free()
 
 
 #func _process(delta: float) -> void:
