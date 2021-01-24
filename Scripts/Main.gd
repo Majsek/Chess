@@ -254,7 +254,12 @@ func move(move_pos) -> void:
 			
 	select_.firstMoveDone()
 	select_.setPosition(move_pos1,move_pos2)
+	if select_name == "pawn" && (move_pos1 == 0 || move_pos1 == 7):
+		promotion(select_)
+	else:
+		nextRound()
 	
+func nextRound():
 #	další kolo
 	attackers_ = []
 	white_moves_ = []
@@ -266,6 +271,10 @@ func move(move_pos) -> void:
 	blockers_ = []
 	nextTurn()
 	drawTexture()
+	
+func promotion(pawn):
+	print(pawn.getColor()+" pawn has promoted!")
+	nextRound()
 
 func getEnPassantMove() -> Array:
 	return en_passant_move_
