@@ -205,6 +205,8 @@ func addMoves(moves):
 		move.set_translation(Vector3(moves[i][0]*3-10.5,0.7,moves[i][1]*3-10.5))
 		if map_[moves[i][0]][moves[i][1]] != null: 
 			move.setMoveRed()
+		if select_.getName() == "pawn" && moves[i] == en_passant_move_:
+			move.setMoveRed()
 			
 func addCastlingMove(y_pos,x_pos):
 	var castling_move = Move.instance()
