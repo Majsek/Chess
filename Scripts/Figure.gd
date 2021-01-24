@@ -73,7 +73,7 @@ func addKillCount() -> void:
 func getKillCount() -> int:
 	return kill_count_
 
-func moveAnimation(move_position) -> void:
+func moveAnimation(move_position,z_pos : int = 10) -> void:
 	var previous_position = getPosition()
 	var anim = Animation.new()
 	
@@ -81,14 +81,14 @@ func moveAnimation(move_position) -> void:
 	anim.track_set_path(track_index, ":translation")
 	
 	anim.track_insert_key(track_index, 0.0,
-	Vector3(previous_position[0]*3-10.5,10,previous_position[1]*3-10.5), 0.15)
+	Vector3(previous_position[0]*3-10.5,z_pos,previous_position[1]*3-10.5), 0.15)
 	anim.track_insert_key(track_index, 1,
-	Vector3(move_position[0]*3-10.5,10,move_position[1]*3-10.5),0.15)
+	Vector3(move_position[0]*3-10.5,z_pos,move_position[1]*3-10.5),0.15)
 	
 	animation_player_.add_animation("anim_name", anim)
 	animation_player_.play("anim_name")
 	
-func ableToMove(move_pos1,move_pos2, direction, dont : Array = [false,false]) -> Array:
+func ableToMove(move_pos1,move_pos2,direction,dont : Array = [false,false]) -> Array:
 	if get_parent().checkIfBlocker(self):
 		print(color_ + name_ + "is blocking the King!")
 		# !(allowedDirection_ == 0 || direction == allowedDirection_)

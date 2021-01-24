@@ -259,7 +259,7 @@ func move(move_pos) -> void:
 	else:
 		nextRound()
 	
-func nextRound():
+func nextRound() -> void:
 #	další kolo
 	attackers_ = []
 	white_moves_ = []
@@ -272,8 +272,20 @@ func nextRound():
 	nextTurn()
 	drawTexture()
 	
-func promotion(pawn):
+func promotion(pawn) -> void:
 	print(pawn.getColor()+" pawn has promoted!")
+	var promotion_queen = Queen.instance()
+	var promotion_bishop = Bishop.instance()
+	var promotion_knight = Knight.instance()
+	var promotion_rook = Rook.instance()
+	var promotion_figures : Array = [promotion_queen,promotion_bishop,promotion_knight,promotion_rook]
+	var place : int = 2
+	for promotion_figure in promotion_figures:
+		add_child(promotion_figure)
+		promotion_figure.set_translation(Vector3(4*3-10.5,30,place*3-10.5))
+		promotion_figure.setPosition(4,place)
+		promotion_figure.moveAnimation([4,place],20)
+		place += 1
 	nextRound()
 
 func getEnPassantMove() -> Array:
