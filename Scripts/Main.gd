@@ -23,6 +23,8 @@ var attacking_blocker_ : Node
 var castling_move_ : Node
 var white_moves_ : Array = []
 var black_moves_ : Array = []
+var en_passant_move_ : Array = []
+var en_passant_victim_ : Node
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -216,6 +218,8 @@ func addCastlingMove(y_pos,x_pos):
 func move(move_pos) -> void:
 	var move_pos1 = move_pos[0]
 	var move_pos2 = move_pos[1]
+	var select_pos = select_.getPosition()
+	var select_name = select_.getName()
 	
 	for i in moves_:
 		i.queue_free()
@@ -228,13 +232,27 @@ func move(move_pos) -> void:
 		freeFigure(map_[move_pos1][move_pos2])
 		
 	select_.moveAnimation(move_pos)
-	var select_pos = select_.getPosition()
 	map_[select_pos[0]][select_pos[1]] = null
 	map_[move_pos1][move_pos2] = select_
+	
+	if select_name == "pawn" && move_pos == en_passant_move_:
+		killEnPassantVictim()
+	en_passant_move_ = []
+	if select_name == "pawn" && select_.isFirstMove():
+		en_passant_victim_ = select_
+		if select_.getColor() == "white":
+			if move_pos1 == 3:
+				en_passant_move_ = [2,move_pos2]
+		else:
+			if move_pos1 == 4:
+				en_passant_move_ = [5,move_pos2]
+	else:
+		if select_name == "king":
+			setKingPos(move_pos1,move_pos2,select_.getColor())
+			
 	select_.firstMoveDone()
 	select_.setPosition(move_pos1,move_pos2)
-	if select_.getName() == "king":
-		setKingPos(move_pos1,move_pos2,select_.getColor())
+	
 #	další kolo
 	attackers_ = []
 	white_moves_ = []
@@ -247,6 +265,18 @@ func move(move_pos) -> void:
 	nextTurn()
 	drawTexture()
 
+func getEnPassantMove() -> Array:
+	return en_passant_move_
+	
+func killEnPassantVictim() -> void:
+	var pos = en_passant_victim_.getPosition()
+	map_[pos[0]][pos[1]] = null
+	en_passant_victim_.get_child(0).set_mode(RigidBody.MODE_RIGID)
+	select_.addKillCount()
+	figures_.erase(en_passant_victim_)
+	en_passant_victim_.queue_free()
+	
+	
 func castlingMove(position):
 #	rook's positions
 	var old_y

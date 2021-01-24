@@ -68,6 +68,8 @@ func ableToMovePawn(move_pos1,move_pos2) -> bool:
 			
 		var someone = get_parent().getFromMap(move_pos1,move_pos2)
 		if someone == null:
+			if get_parent().getEnPassantMove() == [move_pos1,move_pos2]:
+				moves_.append(move)
 			if move_pos2 == position_[1]:
 	#			addMove
 				if dont3 == false:
