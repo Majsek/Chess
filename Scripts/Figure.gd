@@ -12,11 +12,27 @@ var all_moves_ : Array = []
 var attack_moves_ : Array = []
 var blockers_ : Array = [null,null,null,null,null,null,null,null,null,null]
 var allowedDirection_ : int = 0
+var promotion_ : bool = false
+var z_pos_ : int = 10
 onready var parent_ = get_parent()
 onready var animation_player_ = AnimationPlayer.new()
 
 func _ready() -> void:
-	yield(get_tree().create_timer(3),"timeout")
+	if promotion_ == false:
+		setStaticAfterTimeout(3)
+	else:
+		setZPos(30)
+		print("ddddddddddddddddddddddddddddddddddd")
+		setStaticAfterTimeout(2)
+		
+func initPromotion():
+	promotion_ = true
+	
+func setZPos(value : int):
+	z_pos_ = value
+	
+func setStaticAfterTimeout(time : int):
+	yield(get_tree().create_timer(time),"timeout")
 	$RigidBody.set_mode(RigidBody.MODE_STATIC)
 	add_child(animation_player_)
 
@@ -81,7 +97,7 @@ func moveAnimation(move_position,z_pos : int = 10) -> void:
 	anim.track_set_path(track_index, ":translation")
 	
 	anim.track_insert_key(track_index, 0.0,
-	Vector3(previous_position[0]*3-10.5,z_pos,previous_position[1]*3-10.5), 0.15)
+	Vector3(previous_position[0]*3-10.5,z_pos_,previous_position[1]*3-10.5), 0.15)
 	anim.track_insert_key(track_index, 1,
 	Vector3(move_position[0]*3-10.5,z_pos,move_position[1]*3-10.5),0.15)
 	

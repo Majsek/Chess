@@ -25,6 +25,8 @@ var white_moves_ : Array = []
 var black_moves_ : Array = []
 var en_passant_move_ : Array = []
 var en_passant_victim_ : Node
+var promotion_ : bool = false
+var promoted_pawn_ : Node
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -172,28 +174,35 @@ func checkAllMoves() -> void:
 		map_[black_king_pos_[0]][black_king_pos_[1]].checkMoves()
 		
 func select(select,color):
-	if colorTurn_ != color:
-		return
-	if !select in figures_:
-		return
-	for i in moves_:
-		i.queue_free()
-	moves_.clear()
-	if castling_move_ != null:
-		castling_move_.queue_free()
+	if promotion_ != true:
+		if colorTurn_ != color:
+			return
+		if !select in figures_:
+			return
+		for i in moves_:
+			i.queue_free()
+		moves_.clear()
+		if castling_move_ != null:
+			castling_move_.queue_free()
 
-	select_ = select
+		select_ = select
 
-	select.selectColor()
-	var moves = select.getMoves()
-	addMoves(moves)
+		select.selectColor()
+		var moves = select.getMoves()
+		addMoves(moves)
 
-	var castlingAvailable = castlingAvailable(color)
-	if select.getName() == "king":
-		if castlingAvailable[0] == true:
-			addCastlingMove(select.getPosition()[0],6)
-		if castlingAvailable[1] == true:
-			addCastlingMove(select.getPosition()[0],2)
+		var castlingAvailable = castlingAvailable(color)
+		if select.getName() == "king":
+			if castlingAvailable[0] == true:
+				addCastlingMove(select.getPosition()[0],6)
+			if castlingAvailable[1] == true:
+				addCastlingMove(select.getPosition()[0],2)
+	else:
+		var pawn_pos : Array = promoted_pawn_.getPosition()
+		select.moveAnimation(pawn_pos,10)
+		select.setPosition(pawn_pos[0],pawn_pos[1])
+		select.setZPos(10)
+		nextRound()
 
 
 func addMoves(moves):
@@ -273,20 +282,27 @@ func nextRound() -> void:
 	drawTexture()
 	
 func promotion(pawn) -> void:
-	print(pawn.getColor()+" pawn has promoted!")
-	var promotion_queen = Queen.instance()
-	var promotion_bishop = Bishop.instance()
-	var promotion_knight = Knight.instance()
-	var promotion_rook = Rook.instance()
+	promoted_pawn_ = pawn
+	var color = pawn.getColor()
+	var promotion_queen = Queen.instance(true)
+	var promotion_bishop = Bishop.instance(true)
+	var promotion_knight = Knight.instance(true)
+	var promotion_rook = Rook.instance(true)
 	var promotion_figures : Array = [promotion_queen,promotion_bishop,promotion_knight,promotion_rook]
 	var place : int = 2
+	
+	print(color+" pawn has promoted!")
+	
+	promotion_ = true
+	
 	for promotion_figure in promotion_figures:
+		promotion_figure.initPromotion()
+		promotion_figure.initColor(color)
 		add_child(promotion_figure)
 		promotion_figure.set_translation(Vector3(4*3-10.5,30,place*3-10.5))
 		promotion_figure.setPosition(4,place)
-		promotion_figure.moveAnimation([4,place],20)
+		promotion_figure.moveAnimation([4,place],27)
 		place += 1
-	nextRound()
 
 func getEnPassantMove() -> Array:
 	return en_passant_move_
