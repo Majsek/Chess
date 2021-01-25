@@ -199,9 +199,10 @@ func select(select,color):
 				addCastlingMove(select.getPosition()[0],2)
 	else:
 		var pawn_pos : Array = promoted_pawn_.getPosition()
-		select.moveAnimation(pawn_pos,10)
+		select.moveAnimation(pawn_pos,20)
 		select.setPosition(pawn_pos[0],pawn_pos[1])
-		select.setZPos(10)
+		select.setZPos(20)
+		select.setPromotionFalse()
 		nextRound()
 
 
@@ -283,6 +284,7 @@ func nextRound() -> void:
 	
 func promotion(pawn) -> void:
 	promoted_pawn_ = pawn
+	var pawn_pos = promoted_pawn_.getPosition()
 	var color = pawn.getColor()
 	var promotion_queen = Queen.instance(true)
 	var promotion_bishop = Bishop.instance(true)
@@ -297,9 +299,9 @@ func promotion(pawn) -> void:
 	
 	for promotion_figure in promotion_figures:
 		promotion_figure.initPromotion()
-		promotion_figure.initColor(color)
+		promotion_figure.initColor(color) 
 		add_child(promotion_figure)
-		promotion_figure.set_translation(Vector3(4*3-10.5,30,place*3-10.5))
+		promotion_figure.set_translation(Vector3(pawn_pos[0]*3-10.5,10,pawn_pos[1]*3-10.5))
 		promotion_figure.setPosition(4,place)
 		promotion_figure.moveAnimation([4,place],27)
 		place += 1

@@ -21,12 +21,16 @@ func _ready() -> void:
 	if promotion_ == false:
 		setStaticAfterTimeout(3)
 	else:
-		setZPos(30)
+#		setZPos(10)
 		print("ddddddddddddddddddddddddddddddddddd")
-		setStaticAfterTimeout(2)
+		$RigidBody.set_mode(RigidBody.MODE_STATIC)
+		add_child(animation_player_)
 		
 func initPromotion():
 	promotion_ = true
+	
+func setPromotionFalse():
+	promotion_ = false
 	
 func setZPos(value : int):
 	z_pos_ = value
