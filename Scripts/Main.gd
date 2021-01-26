@@ -27,6 +27,7 @@ var en_passant_move_ : Array = []
 var en_passant_victim_ : Node
 var promotion_ : bool = false
 var promoted_pawn_ : Node
+var promotion_figures_ : Array
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -199,10 +200,19 @@ func select(select,color):
 				addCastlingMove(select.getPosition()[0],2)
 	else:
 		var pawn_pos : Array = promoted_pawn_.getPosition()
-		select.moveAnimation(pawn_pos,20)
+		select.moveAnimation(pawn_pos,10)
 		select.setPosition(pawn_pos[0],pawn_pos[1])
-		select.setZPos(20)
+		map_[pawn_pos[0]][pawn_pos[1]] = select
+		select.setZPos(10)
 		select.setPromotionFalse()
+		promoted_pawn_.queue_free()
+		for figure in promotion_figures_:
+			if figure.getPromotion():
+				figure.queue_free()
+		figures_.append(select)
+		figures_.erase(promoted_pawn_)
+		promotion_ = false
+		print(select.getName())
 		nextRound()
 
 
@@ -290,20 +300,23 @@ func promotion(pawn) -> void:
 	var promotion_bishop = Bishop.instance(true)
 	var promotion_knight = Knight.instance(true)
 	var promotion_rook = Rook.instance(true)
-	var promotion_figures : Array = [promotion_queen,promotion_bishop,promotion_knight,promotion_rook]
+	promotion_figures_ = [promotion_queen,promotion_bishop,promotion_knight,promotion_rook]
 	var place : int = 2
 	
 	print(color+" pawn has promoted!")
 	
 	promotion_ = true
 	
-	for promotion_figure in promotion_figures:
+	for promotion_figure in promotion_figures_:
 		promotion_figure.initPromotion()
 		promotion_figure.initColor(color) 
 		add_child(promotion_figure)
-		promotion_figure.set_translation(Vector3(pawn_pos[0]*3-10.5,10,pawn_pos[1]*3-10.5))
+		promotion_figure.get_child(0).set_translation(Vector3(0,-10.0+1.899977,0))
+		promotion_figure.setPosition(pawn_pos[0],pawn_pos[1])
+		promotion_figure.set_translation(Vector3(pawn_pos[0]*3-10.5,0,pawn_pos[1]*3-10.5))
+#		promotion_figure.set_translation(Vector3(4*3-10.5,9,place*3-10.5))
+		promotion_figure.moveAnimation([4,place],15)
 		promotion_figure.setPosition(4,place)
-		promotion_figure.moveAnimation([4,place],27)
 		place += 1
 
 func getEnPassantMove() -> Array:
@@ -473,10 +486,7 @@ func _input(event):
 
 
 #func _process(delta: float) -> void:
-##	for Load in range(8):
-##		for Load2 in range(8):
-##			var figure = map_[Load][Load2]
-##			figure.unSelectLast()
+
 #
 #
 #

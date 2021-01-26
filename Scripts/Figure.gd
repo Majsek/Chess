@@ -18,28 +18,28 @@ onready var parent_ = get_parent()
 onready var animation_player_ = AnimationPlayer.new()
 
 func _ready() -> void:
+	add_child(animation_player_)
 	if promotion_ == false:
-		setStaticAfterTimeout(3)
-	else:
-#		setZPos(10)
+		yield(get_tree().create_timer(2),"timeout")
+		$RigidBody.set_mode(RigidBody.MODE_STATIC)	
+	else:	
+		setZPos(0)
 		print("ddddddddddddddddddddddddddddddddddd")
 		$RigidBody.set_mode(RigidBody.MODE_STATIC)
-		add_child(animation_player_)
 		
-func initPromotion():
+		
+func initPromotion() -> void:
 	promotion_ = true
 	
-func setPromotionFalse():
+func setPromotionFalse() -> void:
 	promotion_ = false
+	
+func getPromotion() -> bool:
+	return promotion_
 	
 func setZPos(value : int):
 	z_pos_ = value
 	
-func setStaticAfterTimeout(time : int):
-	yield(get_tree().create_timer(time),"timeout")
-	$RigidBody.set_mode(RigidBody.MODE_STATIC)
-	add_child(animation_player_)
-
 func initColor(color) -> void:
 	color_ = color
 	if color == "white":
@@ -56,8 +56,8 @@ func resetColor() -> void:
 func selectColor() -> void:
 	getMesh().set_surface_material(0, preload("res://Materials/selected_material.tres"))
 
-func setPosition(pos1,pos2) -> void:
-	position_ = [pos1,pos2]
+func setPosition(pos1, pos2) -> void:
+	position_ = [pos1, pos2]
 
 func getPosition() -> Array:
 	return position_
@@ -93,22 +93,26 @@ func addKillCount() -> void:
 func getKillCount() -> int:
 	return kill_count_
 
-func moveAnimation(move_position,z_pos : int = 10) -> void:
+func moveAnimation(move_position, z_pos_received : float = 10) -> void:
 	var previous_position = getPosition()
 	var anim = Animation.new()
 	
 	var track_index = anim.add_track(Animation.TYPE_VALUE)
 	anim.track_set_path(track_index, ":translation")
 	
-	anim.track_insert_key(track_index, 0.0,
-	Vector3(previous_position[0]*3-10.5,z_pos_,previous_position[1]*3-10.5), 0.15)
-	anim.track_insert_key(track_index, 1,
-	Vector3(move_position[0]*3-10.5,z_pos,move_position[1]*3-10.5),0.15)
+	var point1 := Vector3(previous_position[0]*3-10.5,z_pos_,previous_position[1]*3-10.5)
+#	var point2 := Vector3(previous_position[0]+*3-10.5,15,previous_position[1]*3-10.5)
+	var point3 := Vector3(move_position[0]*3-10.5,z_pos_received,move_position[1]*3-10.5)
+	var point2 := Vector3((point1.x+point3.x)/2.0,13,(point1.z+point3.z)/2.0)
+	
+	anim.track_insert_key(track_index, 0.0, point1, 0.3)
+	anim.track_insert_key(track_index, 0.5, point2, 0.2)
+	anim.track_insert_key(track_index, 1, point3 ,0.15)
 	
 	animation_player_.add_animation("anim_name", anim)
 	animation_player_.play("anim_name")
 	
-func ableToMove(move_pos1,move_pos2,direction,dont : Array = [false,false]) -> Array:
+func ableToMove(move_pos1, move_pos2, direction, dont : Array = [false,false]) -> Array:
 	if get_parent().checkIfBlocker(self):
 		print(color_ + name_ + "is blocking the King!")
 		# !(allowedDirection_ == 0 || direction == allowedDirection_)

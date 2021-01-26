@@ -15,7 +15,7 @@ _global_script_class_icons={
 
 [application]
 
-config/name="Chess2.1"
+config/name="Chess2.2"
 run/main_scene="res://Scenes/Main.tscn"
 config/icon="res://icon.png"
 
