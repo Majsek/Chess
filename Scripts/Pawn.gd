@@ -7,8 +7,10 @@ func ableToMovePawn(move_pos1,move_pos2) -> bool:
 	var dont = true
 	if get_parent().checkIfBlocker(self):
 		print(color_ + name_ + "is blocking the King!")
-		if get_parent().getAttackingBlocker().getPosition() != [move_pos1,move_pos2]:
-			return dont
+		if get_parent().getAttackingBlocker().getPosition() != [move_pos1,move_pos2] :
+			if allowedDirection_ != 8 || allowedDirection_ != 2:
+				print(allowedDirection_)
+				return dont
 	if (move_pos2 < 8 && move_pos2 >= 0) && (move_pos1 < 8 && move_pos1 >= 0):
 		var move = [move_pos1,move_pos2]
 		var attackers = get_parent().getCheck()
@@ -104,4 +106,8 @@ func checkMoves():
 				dont1 = ableToMovePawn(pos1+(move_pawn+1)*move_side,pos2)
 				if isFirstMove() == false:
 					break
-	get_parent().appendAllMoves(attack_moves_,color_)
+	if attack_moves_ != []:
+		get_parent().appendAllMoves(attack_moves_,color_)
+		for move in attack_moves_:
+				if get_parent().getKingPos(anti_color_) == move:
+					get_parent().setCheck(anti_color_,self)
