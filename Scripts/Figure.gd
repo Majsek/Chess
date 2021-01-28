@@ -23,7 +23,7 @@ func _ready() -> void:
 		yield(get_tree().create_timer(2),"timeout")
 		$RigidBody.set_mode(RigidBody.MODE_STATIC)	
 	else:	
-		setZPos(0)
+		setZPos(15)
 		print("ddddddddddddddddddddddddddddddddddd")
 		$RigidBody.set_mode(RigidBody.MODE_STATIC)
 		
@@ -103,10 +103,11 @@ func moveAnimation(move_position, z_pos_received : float = 10) -> void:
 	var point1 := Vector3(previous_position[0]*3-10.5,z_pos_,previous_position[1]*3-10.5)
 #	var point2 := Vector3(previous_position[0]+*3-10.5,15,previous_position[1]*3-10.5)
 	var point3 := Vector3(move_position[0]*3-10.5,z_pos_received,move_position[1]*3-10.5)
-	var point2 := Vector3((point1.x+point3.x)/2.0,13,(point1.z+point3.z)/2.0)
+	if promotion_ == false:
+		var point2 := Vector3((point1.x+point3.x)/2.0,13,(point1.z+point3.z)/2.0)
+		anim.track_insert_key(track_index, 0.5, point2, 0.2)
 	
 	anim.track_insert_key(track_index, 0.0, point1, 0.3)
-	anim.track_insert_key(track_index, 0.5, point2, 0.2)
 	anim.track_insert_key(track_index, 1, point3 ,0.15)
 	
 	animation_player_.add_animation("anim_name", anim)
