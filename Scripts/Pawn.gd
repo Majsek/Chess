@@ -8,7 +8,7 @@ func ableToMovePawn(move_pos1,move_pos2) -> bool:
 	if get_parent().checkIfBlocker(self):
 		print(color_ + name_ + "is blocking the King!")
 		if get_parent().getAttackingBlocker().getPosition() != [move_pos1,move_pos2] :
-			if allowedDirection_ != 8 || allowedDirection_ != 2:
+			if !(allowedDirection_ == 8 || allowedDirection_ == 2):
 				print(allowedDirection_)
 				return dont
 	if (move_pos2 < 8 && move_pos2 >= 0) && (move_pos1 < 8 && move_pos1 >= 0):

@@ -10,6 +10,8 @@ var Move = preload("res://Scenes/Move.tscn")
 
 var map_ = []
 var figures_ = []
+var white_figures_ = []
+var black_figures_ = []
 var select_
 var mesh_
 var moves_ = []
@@ -23,6 +25,8 @@ var attacking_blocker_ : Node
 var castling_move_ : Node
 var white_moves_ : Array = []
 var black_moves_ : Array = []
+var eligible_white_moves_ : Array = []
+var eligible_black_moves_ : Array = []
 var en_passant_move_ : Array = []
 var en_passant_victim_ : Node
 var promotion_ : bool = false
@@ -45,56 +49,68 @@ func _ready() -> void:
 		var B_pawn = Pawn.instance()
 		B_pawn.initColor("black")
 		map[6][Pawns] = B_pawn
+		black_figures_.append(B_pawn)
 		add_child(B_pawn)
 		var W_pawn = Pawn.instance()
 		W_pawn.initColor("white")
 		map[1][Pawns] = W_pawn
+		white_figures_.append(W_pawn)
 		add_child(W_pawn)
 
 	for Else in [0,7]:
 		var B_Rook = Rook.instance()
 		B_Rook.initColor("black")
 		map[7][Else] = B_Rook
+		black_figures_.append(B_Rook)
 		add_child(B_Rook)
 		var W_Rook = Rook.instance()
 		W_Rook.initColor("white")
 		map[0][Else] = W_Rook
+		white_figures_.append(W_Rook)
 		add_child(W_Rook)
 
 		var B_Knight = Knight.instance()
 		B_Knight.initColor("black")
 		map[7][1+Else*5/7] = B_Knight
+		black_figures_.append(B_Knight)
 		add_child(B_Knight)
 		var W_Knight = Knight.instance()
 		W_Knight.initColor("white")
 		map[0][6+Else*-5/7] = W_Knight
+		white_figures_.append(W_Knight)
 		add_child(W_Knight)
 
 		var B_Bishop = Bishop.instance()
 		B_Bishop.initColor("black")
 		map[7][2+Else*3/7] = B_Bishop
+		black_figures_.append(B_Bishop)
 		add_child(B_Bishop)
 		var W_Bishop = Bishop.instance()
 		W_Bishop.initColor("white")
 		map[0][5+Else*-3/7] = W_Bishop
+		white_figures_.append(W_Bishop)
 		add_child(W_Bishop)
 
 	var B_Queen = Queen.instance()
 	B_Queen.initColor("black")
 	map[7][3] = B_Queen
+	black_figures_.append(B_Queen)
 	add_child(B_Queen)
 	var W_Queen = Queen.instance()
 	W_Queen.initColor("white")
 	map[0][3] = W_Queen
+	white_figures_.append(W_Queen)
 	add_child(W_Queen)
 
 	var B_King = King.instance()
 	B_King.initColor("black")
 	map[7][4] = B_King
+	black_figures_.append(B_King)
 	add_child(B_King)
 	var W_King = King.instance()
 	W_King.initColor("white")
 	map[0][4] = W_King
+	white_figures_.append(W_King)
 	add_child(W_King)
 
 	setKingPos(7,4,"black")
@@ -284,6 +300,8 @@ func nextRound() -> void:
 	attackers_ = []
 	white_moves_ = []
 	black_moves_ = []
+	eligible_white_moves_ = []
+	eligible_black_moves_ = []
 	checkAllMoves()
 	checkAllMoves()
 	for figure in figures_:
@@ -292,7 +310,46 @@ func nextRound() -> void:
 	nextTurn()
 	drawTexture()
 	
-func promotion(pawn) -> void:
+
+	
+	for figure in white_figures_:
+		eligible_white_moves_.append(figure.getMoves())
+	
+	for figure in black_figures_:
+		eligible_black_moves_.append(figure.getMoves())
+		
+	print('White')
+	print(eligible_white_moves_)
+	print('Black')
+	print(eligible_black_moves_)
+	
+	if colorTurn_ == "white" && !hasMoves(eligible_white_moves_):
+		var reason : String
+		if attackers_ != []:
+			reason = "Check Mate!"
+		else:
+			reason = "Stale Mate!"
+		theEnd(reason)
+	else:
+		if colorTurn_ == "black" && !hasMoves(eligible_black_moves_):
+				var reason : String
+				if attackers_ != []:
+					reason = "Check Mate!"
+				else:
+					reason = "Stale Mate!"
+				theEnd(reason)
+		
+func hasMoves(moves: Array) -> bool:
+	var has_moves := false
+	for figure_moves in moves:
+		if !figure_moves.empty():
+			has_moves = true
+	return has_moves
+	
+func theEnd(reason : String) -> void:
+	print (reason)
+	
+func promotion(pawn : Node) -> void:
 	promoted_pawn_ = pawn
 	var pawn_pos = promoted_pawn_.getPosition()
 	var color = pawn.getColor()
@@ -386,7 +443,7 @@ func appendAllMoves(moves,color) -> void:
 	else:
 		for move in moves:
 			black_moves_.append(move)
-		
+			
 func getAllMoves(color) -> Array:
 	if color == "white":
 		return white_moves_
