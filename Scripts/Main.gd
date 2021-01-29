@@ -313,10 +313,12 @@ func nextRound() -> void:
 
 	
 	for figure in white_figures_:
-		eligible_white_moves_.append(figure.getMoves())
+		if figure != null:
+			eligible_white_moves_.append(figure.getMoves())
 	
 	for figure in black_figures_:
-		eligible_black_moves_.append(figure.getMoves())
+		if figure != null:
+			eligible_black_moves_.append(figure.getMoves())
 		
 	print('White')
 	print(eligible_white_moves_)
@@ -480,10 +482,28 @@ func castlingAvailable(color) -> Array:
 	if map_[y_pos][4] != null && map_[y_pos][4].isFirstMove():
 		if map_[y_pos][7] != null && map_[y_pos][7].isFirstMove():
 			if map_[y_pos][6] == null && map_[y_pos][5] == null:
-				short = true
+				for x_pos in range(4,7):
+#					by color
+					if y_pos == 0:
+						short = !([y_pos,x_pos] in black_moves_)
+						if !short:
+							break
+					else: 
+						short = !([y_pos,x_pos] in white_moves_)
+						if !short:
+							break
 		if map_[y_pos][0] != null && map_[y_pos][0].isFirstMove():
 			if map_[y_pos][1] == null && map_[y_pos][2] == null && map_[y_pos][3] == null:
-				long = true
+				for x_pos in range(2,5):
+#					by color
+					if y_pos == 0:
+						long = !([y_pos,x_pos] in black_moves_)
+						if !long:
+							break
+					else: 
+						long = !([y_pos,x_pos] in white_moves_)
+						if !long:
+							break
 	return [short,long]
 #	if check_map_[white_king_pos_[0]][white_king_pos_[1]][1] == "black":
 #		white_check_ += 1
