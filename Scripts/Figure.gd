@@ -114,7 +114,7 @@ func moveAnimation(move_position, z_pos_received : float = 10) -> void:
 	animation_player_.play("anim_name")
 	
 func ableToMove(move_pos1, move_pos2, direction, dont : Array = [false,false]) -> Array:
-	if get_parent().checkIfBlocker(self):
+	if parent_.checkIfBlocker(self):
 		print(color_ + name_ + "is blocking the King!")
 		# !(allowedDirection_ == 0 || direction == allowedDirection_)
 		#return 
@@ -124,13 +124,13 @@ func ableToMove(move_pos1, move_pos2, direction, dont : Array = [false,false]) -
 		allowedDirection_ = 0
 	if (move_pos2 < 8 && move_pos2 >= 0) && (move_pos1 < 8 && move_pos1 >= 0):
 		var move = [move_pos1,move_pos2]
-		var attackers = get_parent().getCheck()
+		var attackers = parent_.getCheck()
 		var dont3 : bool = false
 		if attackers != []:
 			for attacker in attackers:
 				if attacker.getColor() != color_:
 					var attacker_pos = attacker.getPosition()
-					var king_pos = get_parent().getKingPos(color_)
+					var king_pos = parent_.getKingPos(color_)
 					var attacker_moves = attacker.getMoves()
 					attacker_moves.append(attacker.getPosition())
 					if !move in attacker_moves:
@@ -180,7 +180,7 @@ func ableToMove(move_pos1, move_pos2, direction, dont : Array = [false,false]) -
 									else: 
 										dont3 = true
 								
-		var someone = get_parent().getFromMap(move_pos1,move_pos2)
+		var someone = parent_.getFromMap(move_pos1,move_pos2)
 		if someone == null:
 			if dont[0] == false:
 				if dont3 == false:
@@ -203,8 +203,8 @@ func ableToMove(move_pos1, move_pos2, direction, dont : Array = [false,false]) -
 				else:
 #					dont[1] = true
 					if blockers_[direction] != null:
-						get_parent().setAttackingBlocker(self)
-						get_parent().setBlocker(blockers_[direction])
+						parent_.setAttackingBlocker(self)
+						parent_.setBlocker(blockers_[direction])
 						blockers_[direction].setAllowedDirection(direction)
 						dont[1] = true
 					else:
@@ -231,7 +231,7 @@ func resetBlockers() -> void:
 #func ableToMove(move_pos1,move_pos2) -> bool:
 #	var dont = true
 #	if (move_pos2 < 8 && move_pos2 >= 0) && (move_pos1 < 8 && move_pos1 >= 0):
-#		var someone = get_parent().getFromMap(move_pos1,move_pos2)
+#		var someone = parent_.getFromMap(move_pos1,move_pos2)
 #		var move = [move_pos1,move_pos2]
 #		if someone == null:
 ##			addMove
@@ -249,18 +249,18 @@ func resetBlockers() -> void:
 
 func checkForCheck() -> void:
 	if moves_ != [] || attack_moves_ != []:
-		get_parent().appendAllMoves(moves_,color_)
-		get_parent().appendAllMoves(attack_moves_,color_)
+		parent_.appendAllMoves(moves_,color_)
+		parent_.appendAllMoves(attack_moves_,color_)
 		for move in moves_:
-			if get_parent().getKingPos(anti_color_) == move:
-				get_parent().setCheck(anti_color_,self)
+			if parent_.getKingPos(anti_color_) == move:
+				parent_.setCheck(anti_color_,self)
 			
 func getMoves() -> Array:
 	return moves_
 		
 func _on_RigidBody_input_event(_camera: Node, _event: InputEvent, _click_position: Vector3, _click_normal: Vector3, _shape_idx: int) -> void:
 	if _event.is_pressed():
-		get_parent().select(self,getColor())
+		parent_.select(self,getColor())
 		
 		
 #		zapise se do pole seznam movu tim smerem kde k tomu dojde, ten potom prida jako jediny moves, co bude mit blocker

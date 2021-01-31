@@ -34,7 +34,7 @@ var promoted_pawn_ : Node
 var promotion_figures_ : Array
 
 # Called when the node enters the scene tree for the first time.
-func _ready() -> void:
+func calledReady() -> void:
 	randomize()
 
 	drawTexture()
