@@ -379,6 +379,13 @@ func hasMoves(moves: Array) -> bool:
 	
 func theEnd(reason : String) -> void:
 	print (reason)
+	var button = Button.new()
+	button.text = reason
+	button.connect("pressed", self, "_button_pressed")
+	button.set_position(Vector2(50,310))
+	button.set_size(Vector2(100,50))
+	button.set_scale(Vector2(2,2))
+	add_child(button)
 	
 func promotion(pawn : Node) -> void:
 	promoted_pawn_ = pawn
