@@ -33,8 +33,15 @@ var promotion_ : bool = false
 var promoted_pawn_ : Node
 var promotion_figures_ : Array
 
+var game_type_ : String
+var ai_turn_ : bool = false
+
 # Called when the node enters the scene tree for the first time.
-func calledReady() -> void:
+func calledReady(game_type) -> void:
+	game_type_ = game_type
+
+func _ready() -> void:
+
 	randomize()
 
 	drawTexture()
@@ -190,7 +197,7 @@ func checkAllMoves() -> void:
 		map_[white_king_pos_[0]][white_king_pos_[1]].checkMoves()
 		map_[black_king_pos_[0]][black_king_pos_[1]].checkMoves()
 		
-func select(select,color):
+func select(select : Node, color : String):
 	if promotion_ != true:
 		if colorTurn_ != color:
 			return
@@ -264,6 +271,10 @@ func move(move_pos) -> void:
 	moves_.clear()
 	
 	if map_[move_pos1][move_pos2] != null:
+		if map_[move_pos1][move_pos2].getColor() == "white":
+			white_figures_.erase(map_[move_pos1][move_pos2])
+		else:
+			black_figures_.erase(map_[move_pos1][move_pos2])
 		map_[move_pos1][move_pos2].get_child(0).set_mode(RigidBody.MODE_RIGID)
 		select_.addKillCount()
 		figures_.erase(map_[move_pos1][move_pos2])
@@ -309,9 +320,7 @@ func nextRound() -> void:
 	blockers_ = []
 	nextTurn()
 	drawTexture()
-	
 
-	
 	for figure in white_figures_:
 		if figure != null:
 			eligible_white_moves_.append(figure.getMoves())
@@ -340,6 +349,26 @@ func nextRound() -> void:
 				else:
 					reason = "Stale Mate!"
 				theEnd(reason)
+	
+	if game_type_ == "versus_ai":
+		AIMove()
+	
+func AIMove():
+	if colorTurn_ == "black":
+		ai_turn_ = true
+		yield(get_tree().create_timer(1),"timeout")
+		var random_select : Node = black_figures_[rand_range(0, black_figures_.size())]
+		select(random_select,"black")
+		while moves_ == []:
+			random_select = black_figures_[rand_range(0, black_figures_.size())]
+			select(random_select,"black")
+			random_select.resetColor()
+		move(moves_[rand_range(0, moves_.size())].getPosition())
+		random_select.resetColor()
+		ai_turn_ = false
+		
+func isAiTurn() -> bool:
+		return ai_turn_
 		
 func hasMoves(moves: Array) -> bool:
 	var has_moves := false

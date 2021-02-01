@@ -54,7 +54,8 @@ func resetColor() -> void:
 		getMesh().set_surface_material(0, preload("res://Materials/white_material.tres"))
 
 func selectColor() -> void:
-	getMesh().set_surface_material(0, preload("res://Materials/selected_material.tres"))
+	if !parent_.isAiTurn():
+		getMesh().set_surface_material(0, preload("res://Materials/selected_material.tres"))
 
 func setPosition(pos1, pos2) -> void:
 	position_ = [pos1, pos2]
@@ -260,7 +261,8 @@ func getMoves() -> Array:
 		
 func _on_RigidBody_input_event(_camera: Node, _event: InputEvent, _click_position: Vector3, _click_normal: Vector3, _shape_idx: int) -> void:
 	if _event.is_pressed():
-		parent_.select(self,getColor())
+		if !parent_.isAiTurn():
+			parent_.select(self,getColor())
 		
 		
 #		zapise se do pole seznam movu tim smerem kde k tomu dojde, ten potom prida jako jediny moves, co bude mit blocker

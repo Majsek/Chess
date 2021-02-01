@@ -3,9 +3,14 @@ extends Spatial
 var position_ : Array
 var castling_move_ : bool = false
 func _ready() -> void:
-	pass
-func setPosition(position) -> void:
+	if get_parent().isAiTurn():
+		$MeshInstance.set_visible(false)
+	
+func setPosition(position : Array) -> void:
 	position_ = position
+	
+func getPosition() -> Array:
+	return position_
 	
 func setAsCastlingMove() -> void:
 	castling_move_ = true
