@@ -10,7 +10,6 @@ height = 0.8
 script = ExtResource( 1 )
 
 [node name="RigidBody" type="RigidBody" parent="."]
-mass = 25.3153
 
 [node name="MeshInstance" type="MeshInstance" parent="RigidBody"]
 mesh = ExtResource( 2 )

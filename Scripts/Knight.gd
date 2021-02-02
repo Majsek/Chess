@@ -2,6 +2,10 @@ extends "Figure.gd"
 
 func _ready() -> void:
 	name_ = "knight"
+	if color_ == "white":
+		self.set_rotation_degrees(Vector3(0,-90,0))
+	else:
+		self.set_rotation_degrees(Vector3(0,90,0))
 
 func checkMoves():
 	moves_ = []

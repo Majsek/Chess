@@ -32,6 +32,7 @@ var en_passant_victim_ : Node
 var promotion_ : bool = false
 var promoted_pawn_ : Node
 var promotion_figures_ : Array
+var end_ : bool = false
 
 var game_type_ : String
 var ai_turn_ : bool = false
@@ -198,6 +199,8 @@ func checkAllMoves() -> void:
 		map_[black_king_pos_[0]][black_king_pos_[1]].checkMoves()
 		
 func select(select : Node, color : String):
+	if end_:
+			return
 	if promotion_ != true:
 		if colorTurn_ != color:
 			return
@@ -351,7 +354,8 @@ func nextRound() -> void:
 				theEnd(reason)
 	
 	if game_type_ == "versus_ai":
-		AIMove()
+		if !end_:
+			AIMove()
 	
 func AIMove():
 	if colorTurn_ == "black":
@@ -380,12 +384,21 @@ func hasMoves(moves: Array) -> bool:
 func theEnd(reason : String) -> void:
 	print (reason)
 	var button = Button.new()
-	button.text = reason
+	var label = Label.new()
+	label.text = str(colorTurn_)+" won by "+reason
+	button.text = "Back to menu"
 	button.connect("pressed", self, "_button_pressed")
 	button.set_position(Vector2(50,310))
 	button.set_size(Vector2(100,50))
-	button.set_scale(Vector2(2,2))
+
+	label.set_position(Vector2(50,220))
+	label.set_scale(Vector2(1.5,1.5))
 	add_child(button)
+	add_child(label)
+	end_ = true
+	
+func _button_pressed():
+	get_tree().reload_current_scene()
 	
 func promotion(pawn : Node) -> void:
 	promoted_pawn_ = pawn
@@ -404,7 +417,7 @@ func promotion(pawn : Node) -> void:
 	
 	for promotion_figure in promotion_figures_:
 		promotion_figure.initPromotion()
-		promotion_figure.initColor(color) 
+		promotion_figure.initColor(color)
 		add_child(promotion_figure)
 		promotion_figure.get_child(0).set_translation(Vector3(0,-10.0+1.899977,0))
 		promotion_figure.setPosition(pawn_pos[0],pawn_pos[1])
@@ -583,6 +596,13 @@ func nextTurn():
 		colorTurn_ = "black"
 		
 func freeFigure(figure):
+#	select_.getPos vector rozdil aby to bylo min kdyz to je blizko
+#	figure.get_node("RigidBody").add_central_force(Vector3(1000,1000,0))
+	var select_pos = select_.getPosition()
+	var figure_pos = figure.getPosition()
+	var dif = [(figure_pos[0]-select_pos[0])*5,(figure_pos[1]-select_pos[1])*5]
+	yield(get_tree().create_timer(0.7),"timeout")
+	figure.get_node("RigidBody").apply_central_impulse(Vector3(dif[0],5,dif[1]))
 	yield(get_tree().create_timer(3.3),"timeout")
 	figure.queue_free()
 	

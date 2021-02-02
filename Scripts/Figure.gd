@@ -117,6 +117,8 @@ func moveAnimation(move_position, z_pos_received : float = 10) -> void:
 func ableToMove(move_pos1, move_pos2, direction, dont : Array = [false,false]) -> Array:
 	if parent_.checkIfBlocker(self):
 		print(color_ + name_ + "is blocking the King!")
+		if name_ == "knight":
+			return[true,true]
 		# !(allowedDirection_ == 0 || direction == allowedDirection_)
 		#return 
 		if !(allowedDirection_ == 0 || direction == allowedDirection_ || direction == reverseDirection(allowedDirection_)):
@@ -200,7 +202,10 @@ func ableToMove(move_pos1, move_pos2, direction, dont : Array = [false,false]) -
 					dont[0] = true
 				
 				if someone.getName() != "king":
-					blockers_[direction] = someone
+					if blockers_[direction] == null:
+						blockers_[direction] = someone
+					else:
+						blockers_[direction] = null
 				else:
 #					dont[1] = true
 					if blockers_[direction] != null:

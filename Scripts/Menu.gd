@@ -180,7 +180,7 @@ func _on_Button_pressed(game_type) -> void:
 #	camera.set_translation(Vector3(-8,26,0))
 #	camera.set_rotation_degrees(Vector3(-75,-90,0))
 	parent_.calledReady(game_type)
-	get_parent().get_child(0).moveCamera()
+	get_node("/root/Main/Camera").moveCamera()
 
 #onready var animation_player_ = AnimationPlayer.new()
 #func moveCamera() -> void:
