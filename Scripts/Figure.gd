@@ -24,7 +24,6 @@ func _ready() -> void:
 		$RigidBody.set_mode(RigidBody.MODE_STATIC)	
 	else:	
 		setZPos(15)
-		print("ddddddddddddddddddddddddddddddddddd")
 		$RigidBody.set_mode(RigidBody.MODE_STATIC)
 		
 		
@@ -266,6 +265,9 @@ func getMoves() -> Array:
 		
 func _on_RigidBody_input_event(_camera: Node, _event: InputEvent, _click_position: Vector3, _click_normal: Vector3, _shape_idx: int) -> void:
 	if _event.is_pressed():
+		if parent_.isPromotion():
+			if !promotion_:
+				return
 		if !parent_.isAiTurn():
 			parent_.select(self,getColor())
 		

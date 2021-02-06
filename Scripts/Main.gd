@@ -385,7 +385,10 @@ func theEnd(reason : String) -> void:
 	print (reason)
 	var button = Button.new()
 	var label = Label.new()
-	label.text = str(colorTurn_)+" won by "+reason
+	var winner := "White"
+	if colorTurn_ == "white":
+		winner = "Black"
+	label.text = str(winner)+" won by "+reason
 	button.text = "Back to menu"
 	button.connect("pressed", self, "_button_pressed")
 	button.set_position(Vector2(50,310))
@@ -426,6 +429,9 @@ func promotion(pawn : Node) -> void:
 		promotion_figure.moveAnimation([4,place],15)
 		promotion_figure.setPosition(4,place)
 		place += 1
+
+func isPromotion() -> bool:
+	return promotion_
 
 func getEnPassantMove() -> Array:
 	return en_passant_move_
