@@ -1,12 +1,15 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://Scripts/Main.gd" type="Script" id=1]
 [ext_resource path="res://Figures/desk.obj" type="ArrayMesh" id=2]
 [ext_resource path="res://Scenes/Menu.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Scripts/Camera.gd" type="Script" id=4]
+[ext_resource path="res://Materials/white_material.tres" type="Material" id=5]
 
 [sub_resource type="BoxShape" id=1]
 extents = Vector3( 13, 0.5, 13 )
+
+[sub_resource type="PlaneMesh" id=2]
 
 [node name="Main" type="Spatial"]
 script = ExtResource( 1 )
@@ -26,6 +29,30 @@ material/0 = null
 
 [node name="CollisionShape" type="CollisionShape" parent="StaticBody"]
 shape = SubResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="StaticBody"]
+transform = Transform( 0.3, 0, 0, 0, 1, 0, 0, 0, 12.7, 12.4, 0.51, 0 )
+cast_shadow = 0
+mesh = SubResource( 2 )
+material/0 = ExtResource( 5 )
+
+[node name="MeshInstance2" type="MeshInstance" parent="StaticBody"]
+transform = Transform( 0.3, 0, 0, 0, 1, 0, 0, 0, 12.7, -12.4, 0.51, 0 )
+cast_shadow = 0
+mesh = SubResource( 2 )
+material/0 = ExtResource( 5 )
+
+[node name="MeshInstance3" type="MeshInstance" parent="StaticBody"]
+transform = Transform( -1.31134e-08, 0, -12.7, 0, 1, 0, 0.3, 0, -5.55135e-07, 0, 0.51, 12.4 )
+cast_shadow = 0
+mesh = SubResource( 2 )
+material/0 = ExtResource( 5 )
+
+[node name="MeshInstance4" type="MeshInstance" parent="StaticBody"]
+transform = Transform( -4.88762e-08, 0, 12.7, 0, 1, 0, -0.3, 0, -2.06909e-06, 0, 0.51, -12.4 )
+cast_shadow = 0
+mesh = SubResource( 2 )
+material/0 = ExtResource( 5 )
 
 [node name="Menu" parent="." instance=ExtResource( 3 )]
 transform = Transform( -1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -10.179, 37.3398, 0 )

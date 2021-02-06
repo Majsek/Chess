@@ -46,6 +46,7 @@ func _ready() -> void:
 	randomize()
 
 	drawTexture()
+	colorTurnSquare()
 
 	var map = map_
 	map.resize(8)
@@ -179,6 +180,18 @@ func drawTexture():
 	mat.uv1_scale = Vector3(4, 4, 0)
 	mat.uv1_offset = Vector3(0.5, 0, 0)
 	$StaticBody/desk.set_surface_material(0, mat)
+	
+func colorTurnSquare():
+	if colorTurn_ == "black":
+		$StaticBody/MeshInstance.set_surface_material(0, preload("res://Materials/black_material.tres"))
+		$StaticBody/MeshInstance2.set_surface_material(0, preload("res://Materials/black_material.tres"))
+		$StaticBody/MeshInstance3.set_surface_material(0, preload("res://Materials/black_material.tres"))
+		$StaticBody/MeshInstance4.set_surface_material(0, preload("res://Materials/black_material.tres"))
+	else:
+		$StaticBody/MeshInstance.set_surface_material(0, preload("res://Materials/white_material.tres"))
+		$StaticBody/MeshInstance2.set_surface_material(0, preload("res://Materials/white_material.tres"))
+		$StaticBody/MeshInstance3.set_surface_material(0, preload("res://Materials/white_material.tres"))
+		$StaticBody/MeshInstance4.set_surface_material(0, preload("res://Materials/white_material.tres"))
 
 func getFromMap(pos1,pos2):
 	return map_[pos1][pos2]
@@ -322,7 +335,8 @@ func nextRound() -> void:
 		figure.resetBlockers()
 	blockers_ = []
 	nextTurn()
-	drawTexture()
+#	drawTexture()
+	colorTurnSquare()
 
 	for figure in white_figures_:
 		if figure != null:
