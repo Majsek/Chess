@@ -183,15 +183,17 @@ func drawTexture():
 	
 func colorTurnSquare():
 	if colorTurn_ == "black":
-		$StaticBody/MeshInstance.set_surface_material(0, preload("res://Materials/black_material.tres"))
-		$StaticBody/MeshInstance2.set_surface_material(0, preload("res://Materials/black_material.tres"))
-		$StaticBody/MeshInstance3.set_surface_material(0, preload("res://Materials/black_material.tres"))
-		$StaticBody/MeshInstance4.set_surface_material(0, preload("res://Materials/black_material.tres"))
+		var black_mat = preload("res://Materials/pure_black_material.tres")
+		$StaticBody/MeshInstance.set_surface_material(0, black_mat)
+		$StaticBody/MeshInstance2.set_surface_material(0, black_mat)
+		$StaticBody/MeshInstance3.set_surface_material(0, black_mat)
+		$StaticBody/MeshInstance4.set_surface_material(0, black_mat)
 	else:
-		$StaticBody/MeshInstance.set_surface_material(0, preload("res://Materials/white_material.tres"))
-		$StaticBody/MeshInstance2.set_surface_material(0, preload("res://Materials/white_material.tres"))
-		$StaticBody/MeshInstance3.set_surface_material(0, preload("res://Materials/white_material.tres"))
-		$StaticBody/MeshInstance4.set_surface_material(0, preload("res://Materials/white_material.tres"))
+		var white_mat = preload("res://Materials/white_material.tres")
+		$StaticBody/MeshInstance.set_surface_material(0, white_mat)
+		$StaticBody/MeshInstance2.set_surface_material(0, white_mat)
+		$StaticBody/MeshInstance3.set_surface_material(0, white_mat)
+		$StaticBody/MeshInstance4.set_surface_material(0, white_mat)
 
 func getFromMap(pos1,pos2):
 	return map_[pos1][pos2]
