@@ -10,7 +10,6 @@ viewport_path = NodePath("Viewport")
 
 [sub_resource type="SpatialMaterial" id=3]
 resource_local_to_scene = true
-flags_transparent = true
 flags_unshaded = true
 flags_albedo_tex_force_srgb = true
 albedo_texture = SubResource( 2 )

@@ -423,10 +423,10 @@ func promotion(pawn : Node) -> void:
 	promoted_pawn_ = pawn
 	var pawn_pos = promoted_pawn_.getPosition()
 	var color = pawn.getColor()
-	var promotion_queen = Queen.instance(true)
-	var promotion_bishop = Bishop.instance(true)
-	var promotion_knight = Knight.instance(true)
-	var promotion_rook = Rook.instance(true)
+	var promotion_queen = Queen.instance()
+	var promotion_bishop = Bishop.instance()
+	var promotion_knight = Knight.instance()
+	var promotion_rook = Rook.instance()
 	promotion_figures_ = [promotion_queen,promotion_bishop,promotion_knight,promotion_rook]
 	var place : int = 2
 	
@@ -625,7 +625,10 @@ func freeFigure(figure):
 	var dif = [(figure_pos[0]-select_pos[0])*5,(figure_pos[1]-select_pos[1])*5]
 	yield(get_tree().create_timer(0.7),"timeout")
 	figure.get_node("RigidBody").apply_central_impulse(Vector3(dif[0],5,dif[1]))
-	yield(get_tree().create_timer(3.3),"timeout")
+	yield(get_tree().create_timer(1.5),"timeout")
+	figure.get_node("RigidBody/MeshInstance").set_visible(false)
+	figure.spawnParticles()
+	yield(get_tree().create_timer(5),"timeout")
 	figure.queue_free()
 	
 func _input(event):

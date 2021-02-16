@@ -1,5 +1,7 @@
 extends Spatial
 
+var particles_ = preload("res://Scenes/Particles.tscn")
+
 var color_ : String
 var anti_color_ : String
 var position_ : Array = []
@@ -201,10 +203,11 @@ func ableToMove(move_pos1, move_pos2, direction, dont : Array = [false,false]) -
 					dont[0] = true
 				
 				if someone.getName() != "king":
-					if blockers_[direction] == null:
-						blockers_[direction] = someone
-					else:
-						blockers_[direction] = null
+					blockers_[direction] = someone
+#					if blockers_[direction] == null:
+#						blockers_[direction] = someone
+#					else:
+#						blockers_[direction] = null
 				else:
 #					dont[1] = true
 					if blockers_[direction] != null:
@@ -262,6 +265,15 @@ func checkForCheck() -> void:
 			
 func getMoves() -> Array:
 	return moves_
+	
+func spawnParticles() -> void:
+	var particle = particles_.instance()
+	particle.set_mesh($RigidBody/MeshInstance.mesh)
+	particle.set_emitting(true)
+	$RigidBody.set_mode(RigidBody.MODE_STATIC)
+	$RigidBody.set_rotation_degrees(Vector3(0,0,0))
+	$RigidBody.add_child(particle)
+	
 		
 func _on_RigidBody_input_event(_camera: Node, _event: InputEvent, _click_position: Vector3, _click_normal: Vector3, _shape_idx: int) -> void:
 	if _event.is_pressed():

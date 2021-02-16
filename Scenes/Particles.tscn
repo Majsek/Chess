@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Figures/Pawn.obj" type="ArrayMesh" id=1]
+
+[node name="CPUParticles" type="CPUParticles"]
+transform = Transform( 0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0 )
+emitting = false
+amount = 10
+lifetime = 5.0
+one_shot = true
+explosiveness = 1.0
+mesh = ExtResource( 1 )
+direction = Vector3( 0, 5, 0 )
+spread = 180.0
+gravity = Vector3( 0, 10, 0 )
+initial_velocity = 5.0
+angular_velocity = 1.0
+angle_random = 1.0
