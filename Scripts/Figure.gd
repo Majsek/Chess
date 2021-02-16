@@ -16,6 +16,7 @@ var blockers_ : Array = [null,null,null,null,null,null,null,null,null,null]
 var allowedDirection_ : int = 0
 var promotion_ : bool = false
 var z_pos_ : int = 10
+var material_
 onready var parent_ = get_parent()
 onready var animation_player_ = AnimationPlayer.new()
 
@@ -45,14 +46,14 @@ func initColor(color) -> void:
 	color_ = color
 	if color == "white":
 		anti_color_ = "black"
-	else: anti_color_ = "white"
+		material_ = preload("res://Materials/white_material.tres")
+	else: 
+		anti_color_ = "white"
+		material_ = preload("res://Materials/black_material.tres")
 	resetColor()
 	
 func resetColor() -> void:
-	if color_ == "black":
-		getMesh().set_surface_material(0, preload("res://Materials/black_material.tres"))
-	if color_ == "white":
-		getMesh().set_surface_material(0, preload("res://Materials/white_material.tres"))
+		getMesh().set_surface_material(0, material_)
 
 func selectColor() -> void:
 	if !parent_.isAiTurn():
@@ -267,14 +268,14 @@ func getMoves() -> Array:
 	return moves_
 	
 func spawnParticles() -> void:
-	var particle = particles_.instance()
-	particle.set_mesh($RigidBody/MeshInstance.mesh)
-	particle.set_emitting(true)
+	var particles = particles_.instance()
+	particles.set_mesh($RigidBody/MeshInstance.mesh)
+	particles.mesh.set("surface_1/material", material_)
+	particles.set_emitting(true)
 	$RigidBody.set_mode(RigidBody.MODE_STATIC)
 	$RigidBody.set_rotation_degrees(Vector3(0,0,0))
-	$RigidBody.add_child(particle)
+	$RigidBody.add_child(particles)
 	
-		
 func _on_RigidBody_input_event(_camera: Node, _event: InputEvent, _click_position: Vector3, _click_normal: Vector3, _shape_idx: int) -> void:
 	if _event.is_pressed():
 		if parent_.isPromotion():
@@ -282,7 +283,6 @@ func _on_RigidBody_input_event(_camera: Node, _event: InputEvent, _click_positio
 				return
 		if !parent_.isAiTurn():
 			parent_.select(self,getColor())
-		
 		
 #		zapise se do pole seznam movu tim smerem kde k tomu dojde, ten potom prida jako jediny moves, co bude mit blocker
 #		kazdej to bere postupne a stridaj se mu smery, proto to nefunguje, nejsou smery zasebou
