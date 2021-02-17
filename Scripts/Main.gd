@@ -319,6 +319,9 @@ func move(move_pos) -> void:
 			
 	select_.firstMoveDone()
 	select_.setPosition(move_pos1,move_pos2)
+	
+	$AudioStreamPlayer_move.set("playing", true)
+	
 	if select_name == "pawn" && (move_pos1 == 0 || move_pos1 == 7):
 		promotion(select_)
 	else:
@@ -625,6 +628,7 @@ func freeFigure(figure):
 	var dif = [(figure_pos[0]-select_pos[0])*5,(figure_pos[1]-select_pos[1])*5]
 	yield(get_tree().create_timer(0.7),"timeout")
 	figure.get_node("RigidBody").apply_central_impulse(Vector3(dif[0],5,dif[1]))
+	$AudioStreamPlayer_take.set("playing", true)
 	yield(get_tree().create_timer(1.5),"timeout")
 	figure.get_node("RigidBody/MeshInstance").set_visible(false)
 	figure.spawnParticles()

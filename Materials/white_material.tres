@@ -10,3 +10,6 @@ emission = Color( 0, 0, 0, 1 )
 emission_energy = 0.01
 emission_operator = 0
 emission_on_uv2 = false
+clearcoat_enabled = true
+clearcoat = 1.0
+clearcoat_gloss = 0.5
