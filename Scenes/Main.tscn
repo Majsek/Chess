@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://Scripts/Main.gd" type="Script" id=1]
 [ext_resource path="res://Figures/desk.obj" type="ArrayMesh" id=2]
@@ -7,6 +7,8 @@
 [ext_resource path="res://Materials/white_material.tres" type="Material" id=5]
 [ext_resource path="res://Sounds/Move.wav" type="AudioStream" id=6]
 [ext_resource path="res://Sounds/Take.wav" type="AudioStream" id=7]
+[ext_resource path="res://Sounds/End.wav" type="AudioStream" id=8]
+[ext_resource path="res://Sounds/Soundtrack.wav" type="AudioStream" id=9]
 
 [sub_resource type="BoxShape" id=1]
 extents = Vector3( 13, 0.5, 13 )
@@ -68,3 +70,9 @@ stream = ExtResource( 6 )
 
 [node name="AudioStreamPlayer_take" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 7 )
+
+[node name="AudioStreamPlayer_soundtrack" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 9 )
+
+[node name="AudioStreamPlayer_end" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 8 )

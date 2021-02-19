@@ -40,6 +40,7 @@ var ai_turn_ : bool = false
 # Called when the node enters the scene tree for the first time.
 func calledReady(game_type) -> void:
 	game_type_ = game_type
+	$AudioStreamPlayer_soundtrack.set("playing", true)
 
 func _ready() -> void:
 
@@ -351,10 +352,10 @@ func nextRound() -> void:
 		if figure != null:
 			eligible_black_moves_.append(figure.getMoves())
 		
-	print('White')
-	print(eligible_white_moves_)
-	print('Black')
-	print(eligible_black_moves_)
+#	print('White')
+#	print(eligible_white_moves_)
+#	print('Black')
+#	print(eligible_black_moves_)
 	
 	if colorTurn_ == "white" && !hasMoves(eligible_white_moves_):
 		var reason : String
@@ -419,6 +420,9 @@ func theEnd(reason : String) -> void:
 	add_child(label)
 	end_ = true
 	
+	$AudioStreamPlayer_soundtrack.set("playing", false)
+	$AudioStreamPlayer_end.set("playing", true)
+	
 func _button_pressed():
 	get_tree().reload_current_scene()
 	
@@ -463,7 +467,6 @@ func killEnPassantVictim() -> void:
 	figures_.erase(en_passant_victim_)
 	en_passant_victim_.queue_free()
 	
-	
 func castlingMove(position):
 #	rook's positions
 	var old_y
@@ -497,9 +500,6 @@ func castlingMove(position):
 	map_[old_y][old_x] = null
 	castling_move_.queue_free()
 	
-	
-
-
 func setKingPos(pos1,pos2,color) -> void:
 	if color == "white":
 		white_king_pos_ = [pos1,pos2]
