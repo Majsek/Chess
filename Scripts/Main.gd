@@ -126,7 +126,7 @@ func _ready() -> void:
 	setKingPos(7,4,"black")
 	setKingPos(0,4,"white")
 
-	print(map)
+	print(map_)
 
 	for Load in range(8):
 		for Load2 in range(8):
@@ -376,6 +376,9 @@ func nextRound() -> void:
 	if game_type_ == "versus_ai":
 		if !end_:
 			AIMove()
+			
+	print(black_figures_.size())
+	print(black_figures_)
 	
 func AIMove():
 	if colorTurn_ == "black":
@@ -423,7 +426,7 @@ func theEnd(reason : String) -> void:
 	$AudioStreamPlayer_soundtrack.set("playing", false)
 	$AudioStreamPlayer_end.set("playing", true)
 	
-func _button_pressed():
+func _button_pressed() -> void:
 	get_tree().reload_current_scene()
 	
 func promotion(pawn : Node) -> void:
@@ -452,6 +455,8 @@ func promotion(pawn : Node) -> void:
 		promotion_figure.moveAnimation([4,place],15)
 		promotion_figure.setPosition(4,place)
 		place += 1
+	
+	$AudioStreamPlayer_promotion.set("playing", true)
 
 func isPromotion() -> bool:
 	return promotion_
