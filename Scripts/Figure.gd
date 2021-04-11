@@ -282,6 +282,7 @@ func _on_RigidBody_input_event(_camera: Node, _event: InputEvent, _click_positio
 			if !promotion_:
 				return
 		if !parent_.isAiTurn():
+			yield(get_tree().create_timer(1.0/50.0),"timeout")
 			parent_.select(self,getColor())
 		
 #		zapise se do pole seznam movu tim smerem kde k tomu dojde, ten potom prida jako jediny moves, co bude mit blocker

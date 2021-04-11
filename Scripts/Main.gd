@@ -33,7 +33,6 @@ var promotion_ : bool = false
 var promoted_pawn_ : Node
 var promotion_figures_ : Array
 var end_ : bool = false
-
 var game_type_ : String
 var ai_turn_ : bool = false
 
@@ -644,6 +643,7 @@ func _input(event):
 	if event is InputEventMouseButton:
 		if event.is_pressed():
 			if select_:
+				yield(get_tree().create_timer(1.0/50.0),"timeout")
 				select_.resetColor()
 				for i in moves_:
 					i.queue_free()
